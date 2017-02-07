@@ -19,14 +19,17 @@ ___
 
 ## Répartition des lectures et des rôles/tâches dans le groupe
 
-Après étude de la table des matières de chacuns des livres proposés, nous avons extrait les chapitres paraissant les plus importants dans le cadre de notre projet. Il ne s'agit pas d'exclure la lecture du reste de l'oeuvre mais bien de se focaliser sur le plus important :
+Après étude de la table des matières de chacun des livres proposés, nous avons extrait les chapitres paraissant les plus importants dans le cadre de notre projet. Il ne s'agit pas d'exclure la lecture du reste de l'oeuvre mais bien de se focaliser sur le plus important :
 
 *Lessons in Play*
+0. Basic Terminology
 1. Basic Techniques
 2. Outcomes classes
 4. The Algebra of Games
 5. Value of Games
 7. Impartial Games
+8. Hot Games
+9. (w.) Further Directions (jusqu'au point 4)
 
 *Combinatorial Game Theory*
 1. Combinatorial Games
@@ -38,3 +41,8 @@ Etant donnée l'importance pour chacun de maitriser une base commune de la théo
 
 
 ## Diagramme de Gantt prévisionnel
+
+![Diagramme de Gantt Prévisionnel](GanttTERHexRTT.png)
+(Zoomer ou consulter le document externe)
+
+La répartition des tâches n'est pas indiquée explicitement ici, chacun est assigné à toutes les tâches indiquées mais on pourra évidemment les décomposer au fur et à mesure pour distribuer le travail efficacement.

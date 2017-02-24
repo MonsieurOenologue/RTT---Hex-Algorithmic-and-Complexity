@@ -27,7 +27,6 @@ Après étude de la table des matières de chacun des livres proposés, nous avo
 2. Outcomes classes
 4. The Algebra of Games
 5. Value of Games
-7. Impartial Games
 8. Hot Games
 9. (w.) Further Directions (jusqu'au point 4)
 
@@ -42,7 +41,7 @@ Etant donnée l'importance pour chacun de maitriser une base commune de la théo
 
 ## Diagramme de Gantt prévisionnel
 
-![Diagramme de Gantt Prévisionnel](GanttTERHexRTT.png)
+![Diagramme de Gantt Prévisionnel](GanttFINALV3.png)
 (Zoomer ou consulter le document externe)
 
-La répartition des tâches n'est pas indiquée explicitement ici, chacun est assigné à toutes les tâches indiquées mais on pourra évidemment les décomposer au fur et à mesure pour distribuer le travail efficacement.
+La répartition des tâches n'est pas indiquée explicitement ici (sauf pour la partie IA complexe), chacun est assigné à toutes les tâches indiquées mais on pourra (et devra) évidemment les décomposer au fur et à mesure pour distribuer le travail plus efficacement.

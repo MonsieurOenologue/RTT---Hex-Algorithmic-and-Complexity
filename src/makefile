@@ -4,19 +4,19 @@ CFLAGS = -Wall
 EXEC_NAME = Hex
 OBJ_FILES = gameController.o hexBoard.o
 
-# Définition des cibles particulières
+# DÃ©finition des cibles particuliÃ¨res
 .PHONY: clean
 
-# Désactivation des règles implicites
+# DÃ©sactivation des rÃ¨gles implicites
 .SUFFIXES:
 
-# Création de l'exécutable
+# CrÃ©ation de l'exÃ©cutable
 all : $(EXEC_NAME)
 
 $(EXEC_NAME) : $(OBJ_FILES)
 	$(CC) -o $(EXEC_NAME) $(OBJ_FILES)
 
-gameController.o: gameController.cpp
+gameController.o: gameController.cpp hexBoard.h
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 hexBoard.o: hexBoard.cpp hexBoard.h
@@ -24,4 +24,8 @@ hexBoard.o: hexBoard.cpp hexBoard.h
 
 # Suppression des fichiers temporaires
 clean:
-	rm $(EXEC_NAME) $(OBJ_FILES)
+	rm $(OBJ_FILES)
+
+# Suppression de l'exÃ©cutable et des fichiers temporaires
+cleanall:
+	rm $(EXEC_NAME).exe $(OBJ_FILES)

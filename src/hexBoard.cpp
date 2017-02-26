@@ -58,28 +58,29 @@ bool hexBoard::continueGame() {
 
 void hexBoard::displayBoard() {
     string flatI = "";
-    unsigned char i, j, c = 'A', l = 'a';
+    char i, j, numbering = 'A';
     cout << endl << ' ';
-    for(i = 0; i < board.size(); ++i) {
-        cout << ' ' << c;
-        c++;
+    for(i = 0; i < length; ++i) {
+        cout << ' ' << numbering;
+        numbering++;
     }
     cout << endl;
-    for(i = 0; i < board.size(); ++i) {
-        cout << flatI << l << '\\';
-        for(j = 0; j < board[i].size(); ++j) {
+    numbering = 'a';
+    for(i = 0; i < length; ++i) {
+        cout << flatI << numbering << '\\';
+        for(j = 0; j < length; ++j) {
             cout << board[i][j] << '\\';
         }
-        cout << l << endl;
+        cout << numbering << endl;
         flatI += ' ';
-        l++;
+        numbering++;
     }
-    c -= board.size();
+    numbering = 'A';
     flatI += ' ';
     cout << flatI;
-    for(i = 0; i < board.size(); ++i) {
-        cout << ' ' << c;
-        c++;
+    for(i = 0; i < length; ++i) {
+        cout << ' ' << numbering;
+        numbering++;
     }
     cout << endl << endl;
 }

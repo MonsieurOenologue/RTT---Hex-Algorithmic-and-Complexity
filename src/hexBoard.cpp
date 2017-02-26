@@ -1,16 +1,18 @@
 #include "hexBoard.h"
 
 hexBoard::hexBoard() {
+    length = 11;
     board.resize(11);
-    for(unsigned short i = 0; i < 11; ++i) {
-        board[i] = string(11, '0');
+    for(char i = 0; i < 11; ++i) {
+        board[i] = string(11, ' ');
     }
 }
 
 hexBoard::hexBoard(char newLength) {
+    length = newLength;
     board.resize(newLength);
-    for(unsigned short i = 0; i < board.size(); ++i) {
-        board[i] = string(board.size(), '0');
+    for(char i = 0; i < newLength; ++i) {
+        board[i] = string(newLength, ' ');
     }
 }
 
@@ -50,15 +52,25 @@ bool hexBoard::swapRule() {
     return false;
 }
 
-bool hexBoard::gameOver() {
-    return false;
+bool hexBoard::continueGame() {
+    return true;
 }
 
 void hexBoard::displayBoard() {
-    for(unsigned short i = 0; i < board.size(); ++i) {
-        for(unsigned short j = 0; j < board[i].size(); ++j) {
-            cout << board[i][j] << " ";
+    cout << "______________________" << endl;
+    string flatI = "";
+    for(unsigned char i = 0; i < board.size(); ++i) {
+        cout << flatI << '\\';
+        for(unsigned char j = 0; j < board[i].size(); ++j) {
+            cout << board[i][j] << '\\';
         }
+        flatI += ' ';
         cout << endl;
     }
+    cout << flatI + "----------------------" << endl;
+}
+
+void hexBoard::setPosition(char x, char y, char v) {
+    if(x < 0 || x > length || y < 0 || y > length) return;
+    board[x][y] = v;
 }

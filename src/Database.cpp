@@ -11,3 +11,19 @@
  *
  */
 Database::Database() {}
+
+Database::~Database() {}
+
+void newDatabase() {}
+
+bool openDatabase() {
+    return true;
+}
+
+bool saveDatabase() {
+    return true;
+}
+
+bool loadGame() {
+    return true;
+}

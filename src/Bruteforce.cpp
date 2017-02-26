@@ -11,3 +11,5 @@
  *
  */
 Bruteforce::Bruteforce() {}
+
+Bruteforce::~Bruteforce() {}

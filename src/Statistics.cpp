@@ -11,3 +11,11 @@
  *
  */
 Statistics::Statistics() {}
+
+Statistics::~Statistics() {}
+
+void initStats() {}
+
+void getStats() {}
+
+void displayVictoryRatio() {}

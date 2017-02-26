@@ -14,6 +14,8 @@ private :
 
 public :
             AIManager();
+            ~AIManager();
+    void    loadAI(string);
 };
 
 #endif // AIMANAGER_H

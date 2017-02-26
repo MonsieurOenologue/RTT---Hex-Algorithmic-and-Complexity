@@ -10,4 +10,6 @@
  *  @section DESCRIPTION
  *
  */
-MinMax::MinMax() {} 
+MinMax::MinMax() {}
+
+MinMax::~MinMax() {}

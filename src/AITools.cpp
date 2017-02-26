@@ -11,3 +11,5 @@
  *
  */
 AITools::AITools() {}
+
+AITools::~AITools() {}

@@ -14,6 +14,10 @@ private :
 
 public :
             AITools();
+            ~AITools();
+    bool    learnMode();
+    int     getHint();
+    void    setDifficulty(int);
 };
 
 #endif // AITOOLS_H

@@ -11,3 +11,5 @@
  *
  */
 AIManager::AIManager() {}
+AIManager::~AIManager() {}
+void loadAI(string) {}

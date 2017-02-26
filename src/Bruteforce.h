@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 #include <stdio.h>
+#include "AITools.h"
+#include "AIManager.h"
 
 using namespace std;
 
@@ -14,6 +16,7 @@ private :
 
 public :
             Bruteforce();
+            ~Bruteforce();
 };
 
 #endif // BRUTEFORCE_H

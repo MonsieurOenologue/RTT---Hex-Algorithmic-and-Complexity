@@ -11,3 +11,17 @@
  *
  */
 GameView::GameView() {}
+
+GameView::~GameView() {}
+
+void newGame() {
+
+}
+
+bool openGame(int) {
+    return 0;
+}
+
+bool saveGame() {
+    return 0;
+}

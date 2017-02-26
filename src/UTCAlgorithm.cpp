@@ -11,3 +11,5 @@
  *
  */
 UTCAlgorithm::UTCAlgorithm() {}
+
+UTCAlgorithm::~UTCAlgorithm() {}

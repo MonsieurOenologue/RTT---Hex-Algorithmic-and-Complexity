@@ -11,3 +11,23 @@
  *
  */
 Action::Action() {}
+
+Action::~Action() {}
+
+void giveUp() {}
+
+vector<int> getMoveTree() {
+    return {0,0};
+}
+
+int latestMove() {
+    return 0;
+}
+
+bool nextMove() {
+    return true;
+}
+
+bool undoMove() {
+    return true;
+}

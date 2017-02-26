@@ -14,6 +14,12 @@ private :
 
 public :
             Action();
+            ~Action();
+    void    giveUp();
+    vector<int>   getMoveTree();
+    int     latestMove();
+    bool    nextMove();
+    bool    undoMove();
 };
 
 #endif // ACION_H

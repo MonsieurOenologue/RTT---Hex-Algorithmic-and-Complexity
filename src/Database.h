@@ -14,6 +14,11 @@ private :
 
 public :
             Database();
+            ~Database();
+    void    newDatabase();
+    bool    openDatabase();
+    bool    saveDatabase();
+    bool    loadGame();
 };
 
 #endif // DATABASE_H

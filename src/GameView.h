@@ -14,6 +14,10 @@ private :
 
 public :
             GameView();
+            ~GameView();
+    void    newGame();
+    bool    openGame(int);
+    bool    saveGame();
 };
 
 #endif // GAMEVIEW_H

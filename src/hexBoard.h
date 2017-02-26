@@ -8,16 +8,16 @@
 
 using namespace std;
 
-class hexBoard {
+class HexBoard {
 private :
     char            length;
     string          players;
     vector<string>  board;
 
 public :
-            hexBoard();
-            hexBoard(char newLength);
-            ~hexBoard();
+            HexBoard();
+            HexBoard(char newLength);
+            ~HexBoard();
     void    setLength(char newLength);
     char    getLength();
     void    setPlayers(string playerL, string playerR);

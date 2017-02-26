@@ -1,7 +1,17 @@
-#include "hexBoard.h"
-
+#include "HexBoard.h"
+/**
+ *  @file    GameController.cpp
+ *  @author  RTT
+ *  @date    25/02/2017
+ *  @version 1.0
+ *
+ *  @brief
+ *
+ *  @section DESCRIPTION
+ *
+ */
 void newGame() {
-    hexBoard board;
+    HexBoard board;
     bool player1 = true;
     char x, y;
     string playerL, playerR;

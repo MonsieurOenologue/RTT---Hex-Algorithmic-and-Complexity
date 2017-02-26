@@ -1,31 +1,44 @@
-# Makefile
+# Declaration of variables
 CC = g++
-CFLAGS = -Wall
-EXEC_NAME = Hex
-OBJ_FILES = gameController.o hexBoard.o
+CC_FLAGS = -w -pthread -Wall -g -std=c++11
 
-# Définition des cibles particulières
+
+# File names
+EXEC = Hexxxor3000
+SOURCES = $(wildcard *.cpp)
+OBJECTS = GameController.o HexBoard.o
+
+# Define particular targets
 .PHONY: clean
 
-# Désactivation des règles implicites
+# Deactivate implicit rules
 .SUFFIXES:
 
-# Création de l'exécutable
-all : $(EXEC_NAME)
+# Obtains the OS type, either 'Darwin' (OS X) or 'Linux'
+UNAME_S:=$(shell uname -s)
 
-$(EXEC_NAME) : $(OBJ_FILES)
-	$(CC) -o $(EXEC_NAME) $(OBJ_FILES)
+# Function used to check variables. Use on the command line:
+# make print-VARNAME
+# Useful for debugging and adding features
+print-%: ; @echo $*=$($*)
 
-gameController.o: gameController.cpp hexBoard.h
-	$(CC) $(CFLAGS) -o $@ -c $<
+# Generating the exe
+all : $(EXEC)
 
-hexBoard.o: hexBoard.cpp hexBoard.h
-	$(CC) $(CFLAGS) -o $@ -c $<
+# Main target
+$(EXEC): $(OBJECTS)
+	$(CC) $(OBJECTS) -o $(EXEC)
 
-# Suppression des fichiers temporaires
+gameController.o: GameController.cpp HexBoard.h
+		$(CC) $(CFLAGS) -o $@ -c $<
+
+hexBoard.o: HexBoard.cpp HexBoard.h
+		$(CC) $(CFLAGS) -o $@ -c $<
+
+# To obtain object files
+%.o: %.cpp
+	$(CC) -c $(CC_FLAGS) $< -o $@
+
+# To remove generated files
 clean:
-	rm $(OBJ_FILES)
-
-# Suppression de l'exécutable et des fichiers temporaires
-cleanall:
-	rm $(EXEC_NAME).exe $(OBJ_FILES)
+	rm -f $(EXEC) $(OBJECTS)

@@ -1,7 +1,17 @@
 #include <iostream>
 #include <vector>
 #include <string>
-
+/**
+ *  @file    AIManager.cpp
+ *  @author  RTT
+ *  @date    25/02/2017
+ *  @version 1.0
+ *
+ *  @brief
+ *
+ *  @section DESCRIPTION
+ *
+ */
 using namespace std;
 
 int main()

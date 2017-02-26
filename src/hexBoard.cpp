@@ -1,6 +1,16 @@
-#include "hexBoard.h"
-
-hexBoard::hexBoard() {
+#include "HexBoard.h"
+/**
+ *  @file    HexBoard.cpp
+ *  @author  RTT
+ *  @date    25/02/2017
+ *  @version 1.0
+ *
+ *  @brief
+ *
+ *  @section DESCRIPTION
+ *
+ */
+HexBoard::HexBoard() {
     length = 11;
     board.resize(11);
     for(char i = 0; i < 11; ++i) {
@@ -8,7 +18,7 @@ hexBoard::hexBoard() {
     }
 }
 
-hexBoard::hexBoard(char newLength) {
+HexBoard::HexBoard(char newLength) {
     length = newLength;
     board.resize(newLength);
     for(char i = 0; i < newLength; ++i) {
@@ -16,47 +26,47 @@ hexBoard::hexBoard(char newLength) {
     }
 }
 
-hexBoard::~hexBoard() {
+HexBoard::~HexBoard() {
     board.clear();
 }
 
-void hexBoard::setLength(char newLength) {
+void HexBoard::setLength(char newLength) {
     length = newLength;
 }
 
-char hexBoard::getLength() {
+char HexBoard::getLength() {
     return length;
 }
 
-void hexBoard::setPlayers(string playerL, string playerR) {
+void HexBoard::setPlayers(string playerL, string playerR) {
     players = playerL + ";" + playerR;
 }
 
-string hexBoard::getPlayers() {
+string HexBoard::getPlayers() {
     return players;
 }
 
-string hexBoard::getPlayerL() {
+string HexBoard::getPlayerL() {
     return players.substr(0, ';');
 }
 
-string hexBoard::getPlayerR() {
+string HexBoard::getPlayerR() {
     return players.substr(players.find(';')+1, players.length());
 }
 
-FILE* hexBoard::getRules() {
+FILE* HexBoard::getRules() {
     return NULL;
 }
 
-bool hexBoard::swapRule() {
+bool HexBoard::swapRule() {
     return false;
 }
 
-bool hexBoard::continueGame() {
+bool HexBoard::continueGame() {
     return true;
 }
 
-void hexBoard::displayBoard() {
+void HexBoard::displayBoard() {
     string flatI = "";
     char i, j, numbering = 'A';
     cout << endl << ' ';
@@ -85,7 +95,7 @@ void hexBoard::displayBoard() {
     cout << endl << endl;
 }
 
-void hexBoard::setPosition(char x, char y, char v) {
+void HexBoard::setPosition(char x, char y, char v) {
     if(x < 0 || x > length || y < 0 || y > length) return;
     board[x][y] = v;
 }

@@ -57,17 +57,31 @@ bool hexBoard::continueGame() {
 }
 
 void hexBoard::displayBoard() {
-    cout << "______________________" << endl;
     string flatI = "";
-    for(unsigned char i = 0; i < board.size(); ++i) {
-        cout << flatI << '\\';
-        for(unsigned char j = 0; j < board[i].size(); ++j) {
+    unsigned char i, j, c = 'A', l = 'a';
+    cout << endl << ' ';
+    for(i = 0; i < board.size(); ++i) {
+        cout << ' ' << c;
+        c++;
+    }
+    cout << endl;
+    for(i = 0; i < board.size(); ++i) {
+        cout << flatI << l << '\\';
+        for(j = 0; j < board[i].size(); ++j) {
             cout << board[i][j] << '\\';
         }
+        cout << l << endl;
         flatI += ' ';
-        cout << endl;
+        l++;
     }
-    cout << flatI + "----------------------" << endl;
+    c -= board.size();
+    flatI += ' ';
+    cout << flatI;
+    for(i = 0; i < board.size(); ++i) {
+        cout << ' ' << c;
+        c++;
+    }
+    cout << endl << endl;
 }
 
 void hexBoard::setPosition(char x, char y, char v) {

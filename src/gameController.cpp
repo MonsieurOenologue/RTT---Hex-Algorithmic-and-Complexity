@@ -11,14 +11,14 @@ void newGame() {
     while(board.continueGame()) {
         board.displayBoard();
         if(player1) {
-            cout << "C'est au tour de " << playerL << ".\nEntrez la position de votre pion (numero de la colonne suivi du numero de la ligne) : ";
+            cout << "C'est au tour de " << playerL << ".\nEntrez la position de votre pion (colonne 'espace' ligne) : ";
             cin >> y >> x;
-            board.setPosition(x-48, y-48, 'x');
+            board.setPosition(x-97, y-65, 'x');
             player1 = false;
         } else {
-            cout << "C'est au tour de " << playerR << ".\nEntrez la position de votre pion (numero de la colonne suivi du numero de la ligne) : ";
+            cout << "C'est au tour de " << playerR << ".\nEntrez la position de votre pion (colonne 'espace' ligne) : ";
             cin >> y >> x;
-            board.setPosition(x-48, y-48, 'o');
+            board.setPosition(x-97, y-65, 'o');
             player1 = true;
         }
     }

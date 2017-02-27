@@ -1,4 +1,5 @@
 #include "Action.h"
+
 /**
  *  @file    Action.cpp
  *  @author  RTT
@@ -10,24 +11,34 @@
  *  @section DESCRIPTION
  *
  */
-Action::Action() {}
-
-Action::~Action() {}
-
-void giveUp() {}
-
-vector<int> getMoveTree() {
-    return {0,0};
+Action::Action() {
+    movesTree.clear();
 }
 
-int latestMove() {
-    return 0;
+Action::~Action() {
+    movesTree.clear();
 }
 
-bool nextMove() {
-    return true;
+void Action::giveUp() {}
+
+vector<char> Action::getMovesTree() {
+    return movesTree;
 }
 
-bool undoMove() {
+char Action::getLatestMove() {
+    char latestMove = movesTree[movesTree.size()-1];
+    movesTree.resize(movesTree.size()-1);
+    return latestMove;
+}
+
+bool Action::nextMove(char x, char y, char v) {
+    bool newPos = setPosition(x, y, v);
+    if(newPos) movesTree.push_back(x * getLength() + y);
+    return newPos;
+}
+
+bool Action::undoMove() {
+    if(movesTree.size() < 1) return false;
+    setPosition(movesTree[movesTree.size()-1] / getLength(), movesTree[movesTree.size()-1] % getLength(), ' ');
     return true;
 }

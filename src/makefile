@@ -2,11 +2,10 @@
 CC = g++
 CC_FLAGS = -w -pthread -Wall -g -std=c++11
 
-
 # File names
 EXEC = Hexxxor3000
 SOURCES = $(wildcard *.cpp)
-OBJECTS = GameController.o HexBoard.o
+OBJECTS = GameController.o HexBoard.o Action.o
 
 # Define particular targets
 .PHONY: clean
@@ -29,10 +28,13 @@ all : $(EXEC)
 $(EXEC): $(OBJECTS)
 	$(CC) $(OBJECTS) -o $(EXEC)
 
-gameController.o: GameController.cpp HexBoard.h
+GameController.o: GameController.cpp HexBoard.h Action.h
 		$(CC) $(CFLAGS) -o $@ -c $<
 
-hexBoard.o: HexBoard.cpp HexBoard.h
+HexBoard.o: HexBoard.cpp HexBoard.h
+		$(CC) $(CFLAGS) -o $@ -c $<
+
+Action.o: Action.cpp Action.h
 		$(CC) $(CFLAGS) -o $@ -c $<
 
 # To obtain object files
@@ -41,4 +43,4 @@ hexBoard.o: HexBoard.cpp HexBoard.h
 
 # To remove generated files
 clean:
-	rm -f $(EXEC) $(OBJECTS)
+	rm -f $(EXEC).exe $(OBJECTS)

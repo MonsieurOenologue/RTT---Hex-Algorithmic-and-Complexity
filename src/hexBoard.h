@@ -28,7 +28,7 @@ public :
     bool    swapRule();
     bool    continueGame();
     void    displayBoard();
-    void    setPosition(char x, char y, char v);
+    bool    setPosition(char x, char y, char v);
 };
 
 #endif // HEXBOARD_H

@@ -5,21 +5,23 @@
 #include <string>
 #include <vector>
 #include <stdio.h>
+#include "HexBoard.h"
 
 using namespace std;
 
-class Action {
+class Action : public HexBoard {
 private :
-
+    vector<char>    movesTree;
 
 public :
-            Action();
-            ~Action();
-    void    giveUp();
-    vector<int>   getMoveTree();
-    int     latestMove();
-    bool    nextMove();
-    bool    undoMove();
+                    Action();
+                    Action(char);
+                    ~Action();
+    void            giveUp();
+    vector<char>    getMovesTree();
+    char            getLatestMove();
+    bool            nextMove(char, char, char);
+    bool            undoMove();
 };
 
-#endif // ACION_H
+#endif // ACTION_H

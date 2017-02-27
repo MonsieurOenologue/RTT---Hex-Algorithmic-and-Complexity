@@ -1,4 +1,5 @@
 #include "HexBoard.h"
+
 /**
  *  @file    HexBoard.cpp
  *  @author  RTT
@@ -95,7 +96,8 @@ void HexBoard::displayBoard() {
     cout << endl << endl;
 }
 
-void HexBoard::setPosition(char x, char y, char v) {
-    if(x < 0 || x > length || y < 0 || y > length) return;
+bool HexBoard::setPosition(char x, char y, char v) {
+    if(x < 0 || x > length || y < 0 || y > length || v != ' ' && board[x][y] != ' ') return false;
     board[x][y] = v;
+    return true;
 }

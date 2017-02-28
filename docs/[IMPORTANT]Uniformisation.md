@@ -22,8 +22,9 @@ doSomething() {
 ## Template pour la documentation
 
 On utilise Doxygen pour générer la documentation (voir (http://www.doxygen.org)).
+Pas de documentation au niveau du code source (pour le moment du moins) afin d'éviter l'explosion de HTML sur le repo git.
 
-### Exemple de documentation au début d'un fichier 
+### Exemple de documentation au début d'un fichier
 
 ```
 /**
@@ -40,4 +41,12 @@ On utilise Doxygen pour générer la documentation (voir (http://www.doxygen.org
  *\
 ```
 
-### Exemple de documentation avant une méthode
+### Documenter les méthodes
+
+Pensez à écrire la documentation d'une méthode avant ou juste après l'avoir écrite, documentez les problèmes et erreurs également.
+
+
+## Pour plus de détails
+
+- [Documentation de Doxygen - Documenting the code](http://www.stack.nl/~dimitri/doxygen/manual/docblocks.html)
+- [Documentation de Doxygen - Special Commands](http://www.stack.nl/~dimitri/doxygen/manual/commands.html)

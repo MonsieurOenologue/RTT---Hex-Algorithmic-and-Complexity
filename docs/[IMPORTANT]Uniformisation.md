@@ -45,6 +45,21 @@ Pas de documentation au niveau du code source (pour le moment du moins) afin d'�
 
 Pensez à écrire la documentation d'une méthode avant ou juste après l'avoir écrite, documentez les problèmes et erreurs également.
 
+#### Exemple de documentation de méthode
+
+```
+/**
+ *  @brief sum of param a and b giving a result c (basically just a sum of two integer)
+ *  @param a
+ *  @param b
+ *  @return c
+ *
+ *\
+ function (int a, int b) {
+     c = a + b;
+     return c;
+ }
+```
 
 ## Pour plus de détails
 

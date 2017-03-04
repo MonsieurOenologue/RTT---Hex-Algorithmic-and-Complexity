@@ -10,7 +10,7 @@ OBJECTS = GameController.o HexBoard.o Action.o
 # Define particular targets
 .PHONY: clean
 
-# Deactivate implicit rules
+# Disable implicit rules
 .SUFFIXES:
 
 # Obtains the OS type, either 'Darwin' (OS X) or 'Linux'

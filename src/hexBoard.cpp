@@ -13,6 +13,7 @@
  */
 HexBoard::HexBoard() {
     length = 11;
+    nbPawnsPlayed = 0;
     board.resize(11);
     for(char i = 0; i < 11; ++i) {
         board[i] = string(11, ' ');
@@ -21,6 +22,7 @@ HexBoard::HexBoard() {
 
 HexBoard::HexBoard(char newLength) {
     length = newLength;
+    nbPawnsPlayed = 0;
     board.resize(newLength);
     for(char i = 0; i < newLength; ++i) {
         board[i] = string(newLength, ' ');
@@ -37,6 +39,14 @@ void HexBoard::setLength(char newLength) {
 
 char HexBoard::getLength() {
     return length;
+}
+
+void HexBoard::setNbPawnsPlayed(char newNbPawnsPlayed) {
+    nbPawnsPlayed = newNbPawnsPlayed;
+}
+
+char HexBoard::getNbPawnsPlayed() {
+    return nbPawnsPlayed;
 }
 
 void HexBoard::setPlayers(string playerL, string playerR) {
@@ -99,5 +109,54 @@ void HexBoard::displayBoard() {
 bool HexBoard::setPosition(char x, char y, char v) {
     if(x < 0 || x > length || y < 0 || y > length || (v != ' ' && board[x][y] != ' ')) return false;
     board[x][y] = v;
+    nbPawnsPlayed++;
     return true;
+}
+
+bool HexBoard::pawnConnected(char x, char y) {
+    char v = board[x][y];
+    if(x != 0 && (board[x-1][y] == v || (y != length - 1 && board[x-1][y+1] == v))) {
+        return true;
+    }
+    if(x != length - 1 && (board[x+1][y] == v || (y != 0 && board[x+1][y-1] == v))) {
+        return true;
+    }
+    if(y != 0 && board[x][y-1] == v) {
+        return true;
+    }
+    if(y != length - 1 && board[x][y+1] == v) {
+        return true;
+    }
+    return false;
+}
+
+bool HexBoard::victoryBySide(char p) {
+    char x = ceil(p / length), y = p % length, v = board[x][y];
+
+    // TO DO : Insert current and linked pawns into matching var if connected to a side.
+    if(v == 'x') {
+        if(y == 0) {
+            // Add links into highToLowSide
+        } else if(y == length - 1) {
+           // Add links into lowToHighSide
+        } else if(pawnConnected(x, y) == 1) {
+           // Add pawn into matching var, if both : victory
+        }
+    } else { // v == 'o'
+        if(x == 0) {
+            // Add links into leftToRightSide
+        } else if(x == length - 1) {
+            // Add links into rightToLeftSide
+        } else if(pawnConnected(x, y) == 1) {
+           // Add pawn into matching var, if both : victory
+        }
+    }
+
+    // Number of pawns played is not significant enough to reach victory for both players.
+    if(nbPawnsPlayed < length * 2 - 1) {
+        return false;
+    }
+
+    // No victory found.
+    return false;
 }

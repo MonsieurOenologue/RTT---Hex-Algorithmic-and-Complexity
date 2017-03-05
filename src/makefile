@@ -3,18 +3,24 @@ CC = g++
 CC_FLAGS = -w -pthread -Wall -g -std=c++11
 
 # File names
-EXEC = Hexxxor3000
+EXEC = Hexxxor3000.exe
 SOURCES = $(wildcard *.cpp)
 OBJECTS = GameController.o HexBoard.o Action.o
 
 # Define particular targets
-.PHONY: clean
+.PHONY: cleanall
 
 # Disable implicit rules
 .SUFFIXES:
 
-# Obtains the OS type, either 'Darwin' (OS X) or 'Linux'
-UNAME_S:=$(shell uname -s)
+# Obtains the OS type : 'Windows_NT', 'Darwin' (OS X) or 'Linux'
+ifeq ($(OS),Windows_NT)
+    OS_TYPE := Windows
+    RM := del -f
+else
+    OS_TYPE := $(shell uname -s)
+    RM := rm -f
+endif
 
 # Function used to check variables. Use on the command line:
 # make print-VARNAME
@@ -42,5 +48,5 @@ Action.o: Action.cpp Action.h
 	$(CC) -c $(CC_FLAGS) $< -o $@
 
 # To remove generated files
-clean:
-	rm -f $(EXEC).exe $(OBJECTS)
+cleanall:
+	$(RM) $(EXEC) $(OBJECTS)

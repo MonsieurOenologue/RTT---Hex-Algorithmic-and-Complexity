@@ -16,21 +16,21 @@ void newGame() {
     Action moves;
     bool player1 = true;
     char x, y;
-    string playerL, playerR;
+    string playerR, playerL;
     cout << "Entrez le nom des joueurs 1 et 2 :";
-    cin >> playerL >> playerR;
-    moves.setPlayers(playerL, playerR);
+    cin >> playerR >> playerL;
+    moves.setPlayers(playerR, playerL);
     while(moves.continueGame()) {
         moves.displayBoard();
         if(player1) {
-            cout << "C'est au tour de " << playerL << ".\nEntrez la position de votre pion (colonne 'espace' ligne) : ";
+            cout << "C'est au tour de " << playerR << ".\nEntrez la position de votre pion (colonne 'espace' ligne) : ";
             do {
                 cin >> y >> x;
             } while(y < 65 || x < 97 || y > 64 + moves.getLength() || x > 96 + moves.getLength());
             moves.nextMove(x-97, y-65, 'x');
             player1 = false;
         } else {
-            cout << "C'est au tour de " << playerR << ".\nEntrez la position de votre pion (colonne 'espace' ligne) : ";
+            cout << "C'est au tour de " << playerL << ".\nEntrez la position de votre pion (colonne 'espace' ligne) : ";
             do {
                 cin >> y >> x;
             } while(y < 65 || x < 97 || y > 64 + moves.getLength() || x > 96 + moves.getLength());

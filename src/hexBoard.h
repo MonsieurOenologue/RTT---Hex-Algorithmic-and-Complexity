@@ -39,6 +39,10 @@ public :
     bool    setPosition(char x, char y, char v);
     bool    pawnConnected(char x, char y);
     bool    victoryBySide(char p);
+    bool winConditionRecursive(char abs, char ord, char p);
+    bool winConditionRecursiveP1(char abs, char ord, char p);
+    bool winConditionRecursiveP2(char abs, char ord, char p);
+
 };
 
 #endif // HEXBOARD_H

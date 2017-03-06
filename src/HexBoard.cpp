@@ -15,6 +15,8 @@ HexBoard::HexBoard() {
     length = 11;
     nbPawnsPlayed = 0;
     board.resize(11);
+    path = 0;
+    latestMove = '\0';
     for(char i = 0; i < 11; ++i) {
         board[i] = string(11, ' ');
     }
@@ -24,6 +26,8 @@ HexBoard::HexBoard(char newLength) {
     length = newLength;
     nbPawnsPlayed = 0;
     board.resize(newLength);
+    path = 0;
+    latestMove = '\0';
     for(char i = 0; i < newLength; ++i) {
         board[i] = string(newLength, ' ');
     }
@@ -74,7 +78,9 @@ bool HexBoard::swapRule() {
 }
 
 bool HexBoard::continueGame() {
-    return true;
+    path = 0;
+    char x = ceil(latestMove / length), y = latestMove % length;
+    return winConditionRecursive(x,y);
 }
 
 void HexBoard::displayBoard() {
@@ -110,6 +116,7 @@ bool HexBoard::setPosition(char x, char y, char v) {
     if(x < 0 || x > length || y < 0 || y > length || (v != ' ' && board[x][y] != ' ')) return false;
     board[x][y] = v;
     nbPawnsPlayed++;
+    latestMove = x * length + y;
     return true;
 }
 
@@ -161,61 +168,38 @@ bool HexBoard::victoryBySide(char p) {
     return false;
 }
 
-bool HexBoard::winConditionRecursive(char abs, char ord, char p = 0) {
-    if(board[abs][ord] == 'x') return winConditionRecursiveP1(abs,ord,p);
-    else return winConditionRecursiveP2(abs,ord,p);
+bool HexBoard::winConditionRecursive(char line, char col) {
+    return (board[line][col] == ' ') ? true : (winConditionRecursive(line,col,board[line][col],path) != 3);
 }
 
-
-bool HexBoard::winConditionRecursiveP1(char abs, char ord, char p) {
-    if(p==3) return true;
-    if(p%3 == 2 && board[abs][0]=='x' && ord == 0 ) {
-        p = 3;
-        return true;
-    }
-    if(p%3 == 1 && board[abs][length-1]=='x' && ord == length-1 ) {
-        p = 3;
-        return true;
-    }
-    if(p%3 !=1 && board[abs][0]=='x' && ord == 0 ) {
+char HexBoard::winConditionRecursive(char line, char col, char j, char p) {
+    if(p%3 != 1 && board[line][col] == j && line == 0 ) {
         p+=1;
-    }
-    else if(p%3 !=2 && board[abs][length-1]=='x' && ord == length-1 ) {
+    } else if(p%3 != 2 && board[line][col] == j && line == length-1 ) {
         p+=2;
     }
-    if(nbPawnsPlayed < length*2-1) return false;
-
-    for(int i = abs-1; i<=abs+1; i++) {
-        for(int j = ord-1; j <= ord+1; j++) {
-            if(board[i][j] == 'x') return winConditionRecursiveP1(i,j,p);
-        }
+    if(p==3) return p;
+    board[line][col] -= 2;
+    if(line != 0 && col != 0 && board[line-1][col-1] == j) {
+        p = winConditionRecursive(line-1,col-1,j,p);
     }
-    return false;
+    if(p!=3 && line != 0 && board[line-1][col] == j) {
+        p = winConditionRecursive(line-1,col,j,p);
+    }
+    if(p!=3 && line + 1 != length && board[line+1][col] == j) {
+        p = winConditionRecursive(line+1,col,j,p);
+    }
+    if(p!=3 && line + 1 != length && col+1 != length && board[line+1][col+1] == j)  {
+        p = winConditionRecursive(line+1,col+1,j,p);
+    }
+    if(p!=3 && col != 0 && board[line][col-1] == j) {
+        p = winConditionRecursive(line,col-1,j,p);
+    }
+    if(p!=3 && col + 1 != length && board[line][col+1] == j) {
+        p = winConditionRecursive(line,col+1,j,p);
+    }
+
+    board[line][col] += 2;
+
+    return p;
 }
-
-bool HexBoard::winConditionRecursiveP2(char abs, char ord, char p) {
-    if(p==3) return true;
-    if(p%3 == 2 && board[0][ord]=='o' && abs == 0 ) {
-        p = 3;
-        return true;
-    }
-    if(p%3 == 1 && board[length-1][ord]=='x' && abs == length-1 ) {
-        p = 3;
-        return true;
-    }
-    if(p%3 !=1 && board[0][ord]=='o' && abs == 0 ) {
-        p+=1;
-    }
-    else if(p%3 !=2 && board[length-1][ord]=='o' && abs == length-1 ) {
-        p+=2;
-    }
-    if(nbPawnsPlayed < length*2-1) return false;
-
-    for(int i = abs-1; i<=abs+1; i++) {
-        for(int j = ord-1; j <= ord+1; j++) {
-            if(board[i][j] == 'o') return winConditionRecursiveP1(i,j,p);
-        }
-    }
-    return false;
-}
-

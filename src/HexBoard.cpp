@@ -14,8 +14,9 @@
 HexBoard::HexBoard() {
     length = 11;
     nbPawnsPlayed = 0;
-    board.resize(11);
+    latestMove = 0;
     path = 0;
+    board.resize(11);
     latestMove = '\0';
     for(char i = 0; i < 11; ++i) {
         board[i] = string(11, ' ');
@@ -25,8 +26,9 @@ HexBoard::HexBoard() {
 HexBoard::HexBoard(char newLength) {
     length = newLength;
     nbPawnsPlayed = 0;
-    board.resize(newLength);
+    latestMove = 0;
     path = 0;
+    board.resize(newLength);
     latestMove = '\0';
     for(char i = 0; i < newLength; ++i) {
         board[i] = string(newLength, ' ');
@@ -80,7 +82,7 @@ bool HexBoard::swapRule() {
 bool HexBoard::continueGame() {
     path = 0;
     char x = ceil(latestMove / length), y = latestMove % length;
-    return winConditionRecursive(x,y);
+    return victoryByRecursion(x,y);
 }
 
 void HexBoard::displayBoard() {
@@ -137,7 +139,7 @@ bool HexBoard::pawnConnected(char x, char y) {
     return false;
 }
 
-bool HexBoard::victoryBySide(char p) {
+bool HexBoard::victoryByLinksMemory(char p) {
     char x = ceil(p / length), y = p % length, v = board[x][y];
 
     // TO DO : Insert current and linked pawns into matching var if connected to a side.
@@ -168,38 +170,39 @@ bool HexBoard::victoryBySide(char p) {
     return false;
 }
 
-bool HexBoard::winConditionRecursive(char line, char col) {
-    return (board[line][col] == ' ') ? true : (winConditionRecursive(line,col,board[line][col],path) != 3);
+bool HexBoard::victoryByRecursion(char x, char y) {
+    if(board[x][y] == ' ') return true;
+    return (victoryByRecursion(x, y, board[x][y]) != 3);
 }
 
-char HexBoard::winConditionRecursive(char line, char col, char j, char p) {
-    if(p%3 != 1 && board[line][col] == j && line == 0 ) {
-        p+=1;
-    } else if(p%3 != 2 && board[line][col] == j && line == length-1 ) {
-        p+=2;
+char HexBoard::victoryByRecursion(char x, char y, char p) {
+    if(path % 3 != 1 && board[x][y] == p && x == 0 ) {
+        path += 1;
+    } else if(path % 3 != 2 && board[x][y] == p && x == length - 1 ) {
+        path += 2;
     }
-    if(p==3) return p;
-    board[line][col] -= 2;
-    if(line != 0 && col != 0 && board[line-1][col-1] == j) {
-        p = winConditionRecursive(line-1,col-1,j,p);
-    }
-    if(p!=3 && line != 0 && board[line-1][col] == j) {
-        p = winConditionRecursive(line-1,col,j,p);
-    }
-    if(p!=3 && line + 1 != length && board[line+1][col] == j) {
-        p = winConditionRecursive(line+1,col,j,p);
-    }
-    if(p!=3 && line + 1 != length && col+1 != length && board[line+1][col+1] == j)  {
-        p = winConditionRecursive(line+1,col+1,j,p);
-    }
-    if(p!=3 && col != 0 && board[line][col-1] == j) {
-        p = winConditionRecursive(line,col-1,j,p);
-    }
-    if(p!=3 && col + 1 != length && board[line][col+1] == j) {
-        p = winConditionRecursive(line,col+1,j,p);
-    }
+    if(path == 3) return path;
 
-    board[line][col] += 2;
+    board[x][y]++;
+    if(x != 0 && y != 0 && board[x-1][y+1] == p) {
+        path = victoryByRecursion(x-1, y+1, p);
+    }
+    if(path != 3 && x != 0 && board[x-1][y] == p) {
+        path = victoryByRecursion(x-1, y, p);
+    }
+    if(path != 3 && x + 1 != length && board[x+1][y] == p) {
+        path = victoryByRecursion(x+1, y, p);
+    }
+    if(path != 3 && x + 1 != length && y+1 != length && board[x+1][y-1] == p)  {
+        path = victoryByRecursion(x+1, y-1, p);
+    }
+    if(path != 3 && y != 0 && board[x][y-1] == p) {
+        path = victoryByRecursion(x, y-1, p);
+    }
+    if(path != 3 && y + 1 != length && board[x][y+1] == p) {
+        path = victoryByRecursion(x, y+1, p);
+    }
+    board[x][y]--;
 
-    return p;
+    return path;
 }

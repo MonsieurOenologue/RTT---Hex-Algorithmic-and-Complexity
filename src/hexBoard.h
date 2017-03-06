@@ -13,7 +13,8 @@ class HexBoard {
 private :
     char            length;
     char            nbPawnsPlayed;
-    char            
+    char            latestMove;
+    char            path;
     string          players;
     vector<string>  board;
     vector<string>  leftToRightSide;
@@ -39,10 +40,9 @@ public :
     void    displayBoard();
     bool    setPosition(char x, char y, char v);
     bool    pawnConnected(char x, char y);
-    bool    victoryBySide(char p);
-    bool    winConditionRecursive(char abs, char ord, char p);
-    bool    winConditionRecursiveP1(char abs, char ord, char p);
-    bool    winConditionRecursiveP2(char abs, char ord, char p);
+    bool    victoryByLinksMemory(char p);
+    bool    victoryByRecursion(char x, char y);
+    char    victoryByRecursion(char x, char y, char p);
 
 };
 

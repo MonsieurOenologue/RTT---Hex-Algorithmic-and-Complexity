@@ -31,9 +31,20 @@ char Action::getLatestMove() {
     return latestMove;
 }
 
-bool Action::nextMove(char x, char y, char v) {
+bool Action::nextMove(char v) {
+    char x = 0, y = 0;
+    cin >> y >> x;
+    while(y < 65 || x < 97 || y > 64 + getLength() || x > 96 + getLength()) {
+        cout << "Coup impossible, veuillez recommencer : ";
+        cin >> y >> x;
+    }
+    x -= 97;
+    y -= 65;
     bool newPos = setPosition(x, y, v);
-    if(newPos) movesTree.push_back(x * getLength() + y);
+    if(!newPos) {
+        cout << "Coup impossible, veuillez recommencer : ";
+        return nextMove(v);
+    } else movesTree.push_back(x * getLength() + y);
     return newPos;
 }
 

@@ -15,28 +15,40 @@
 void newGame() {
     Action moves;
     bool player1 = true;
-    char x, y;
+    char x, y, randX, randY;
+    srand(time(NULL));
     string playerR, playerL;
-    cout << "Entrez le nom des joueurs 1 et 2 :";
+    cout << "Tooltip : \"RandAI\" jouera aléatoirement." << endl
+         << "Entrez le nom des joueurs 1 et 2 :";
     cin >> playerR >> playerL;
     moves.setPlayers(playerR, playerL);
+    moves.displayBoard();
     while(moves.continueGame()) {
-        moves.displayBoard();
         if(player1) {
             cout << "C'est au tour de " << playerR << ".\nEntrez la position de votre pion (colonne 'espace' ligne) : ";
-            do {
-                cin >> y >> x;
-            } while(y < 65 || x < 97 || y > 64 + moves.getLength() || x > 96 + moves.getLength());
-            moves.nextMove(x-97, y-65, 'x');
+            if(playerR == "RandAI") {
+                do {
+                    randX = rand() % moves.getLength();
+                    randY = rand() % moves.getLength();
+                } while(!moves.setPosition(randX, randY, 'x'));
+            } else moves.nextMove('x');
             player1 = false;
         } else {
             cout << "C'est au tour de " << playerL << ".\nEntrez la position de votre pion (colonne 'espace' ligne) : ";
-            do {
-                cin >> y >> x;
-            } while(y < 65 || x < 97 || y > 64 + moves.getLength() || x > 96 + moves.getLength());
-            moves.nextMove(x-97, y-65, 'o');
+            if(playerL == "RandAI") {
+                do {
+                    randX = rand() % moves.getLength();
+                    randY = rand() % moves.getLength();
+                } while(!moves.setPosition(randX, randY, 'o'));
+            } else moves.nextMove('o');
             player1 = true;
         }
+        moves.displayBoard();
+    }
+    if (player1) {
+        cout << endl << "Victoire du joueur " << playerL << "." << endl;
+    } else {
+        cout << endl << "Victoire du joueur " << playerR << "." << endl;
     }
 }
 

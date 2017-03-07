@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <stdio.h>
+#include <cstdlib>
 #include "HexBoard.h"
 
 using namespace std;
@@ -20,7 +21,7 @@ public :
     void            giveUp();
     vector<char>    getMovesTree();
     char            getLatestMove();
-    bool            nextMove(char, char, char);
+    bool            nextMove(char);
     bool            undoMove();
 };
 

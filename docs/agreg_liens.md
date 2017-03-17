@@ -12,6 +12,8 @@
 
 - [Mémoire cache et opti de code](https://zestedesavoir.com/tutoriels/331/memoire-cache-et-optimisation-de-code/)
 - [Tableaux dynamiques avec Vector](http://icwww.epfl.ch/~lepetit/courses/sv/pdfs/11_1_vector_support.pdf)
+- [Explications sur les grilles hexagonales](http://www.redblobgames.com/grids/hexagons/)
+- [Coordonnées dans les grilles à base d'hexagones](https://www.gamedev.net/resources/_/technical/game-programming/coordinates-in-hexagon-based-tile-maps-r1800)
 
 ## Autres
 - [HEX - Guide stratégique](http://gcrhoads.byethost4.com/GamesPuzzles/Basic.html?i=1#Blocking_moves)

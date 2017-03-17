@@ -6,6 +6,8 @@
 #include <string>
 #include <vector>
 #include <stdio.h>
+#include "HexBoard.h"
+#include "Action.h"
 
 
 using namespace std;
@@ -17,10 +19,13 @@ public :
             DataFileStorage();
             ~DataFileStorage();
     fstream& getDataFile();
-    void    newFile();
-    void    openFile();
-    void    saveFile();
-    void    loadGame();
+    void    newDataFile();
+    void    openDataFile();
+    void    newDataFile(string);
+    void    openDataFile(string);
+    void    saveDataFile();
+    void    saveDataFile(vector<char> movesTree, string, string);
+    bool    loadGame();
     //In case we want to make a passage par référence with the file or something like that
     //DataFileStorage(const DataFileStorage&);
     //DataFileStorage& operator=(const DataFileStorage&);

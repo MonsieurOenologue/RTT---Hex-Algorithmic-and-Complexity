@@ -1,4 +1,6 @@
 #include "DataFileStorage.h"
+#include "Action.h"
+#include <sys/stat.h>
 /**
  *  @file    DataFileStorage.cpp
  *  @author  RTT
@@ -16,34 +18,72 @@ DataFileStorage::DataFileStorage() {
 DataFileStorage::~DataFileStorage() {
 }
 
-void newDataFile() {
+void DataFileStorage::newDataFile() {
     ofstream dataFileOut;
     dataFileOut.open("DataFromPlays.csv");
-}
-
-void newDataFile(string name) {
-    ofstream dataFileOut;
-    dataFileOut.open(name);
-}
-
-void openDataFile() {
-    ifstream dataFileIn;
-    dataFileIn.open("DataFromPlays.csv");
-}
-
-void openDataFile(string name) {
-    ifstream dataFileIn;
-    dataFileIn.open(name);
-}
-
-void saveDataFile(vector<char> movesTree) {
-    ofstream dataFileOut;
-    dataFileOut.open("DataFromPlays.csv");
-
-    cout << string(begin(movesTree), end(movesTree)) << endl;
     dataFileOut.close();
 }
 
-bool loadGame() {
+void DataFileStorage::newDataFile(string name) {
+    ofstream dataFileOut;
+    dataFileOut.open(name);
+    dataFileOut.close();
+}
+
+void DataFileStorage::openDataFile() {
+    ofstream dataFileOut;
+    dataFileOut.open("test.txt");
+    dataFileOut << "test du 1";
+    dataFileOut.close();
+}
+
+void DataFileStorage::openDataFile(string name) {
+    ifstream dataFileIn;
+    dataFileIn.open(name);
+    dataFileIn.close();
+}
+
+void DataFileStorage::saveDataFile(){}
+
+bool fileExists(const std::string& filename)
+{
+    struct stat buf;
+    if (stat(filename.c_str(), &buf) != -1)
+    {
+        return true;
+    }
+    return false;
+}
+
+void DataFileStorage::saveDataFile(vector<char> movesTree , string playerR ,string playerL) {
+    ifstream dataFileIn;
+    ofstream dataFileOut;
+    cout << "debug - test de l'appel de fonction" << endl;
+
+    if(!fileExists("DataFromPlays.csv")){
+        dataFileOut.open("DataFromPlays.csv", fstream::out);
+        dataFileOut << "Creation succesful !" << endl;
+    }
+    else{
+    dataFileOut.open("DataFromPlays.csv", fstream::in |  fstream::out | fstream::app);
+        if (dataFileOut.is_open()){
+        cout << "File has been opened properly";
+        dataFileOut << playerR+"\n" << endl;
+        dataFileOut << playerL+"\n" << endl;
+        for (vector<char>::const_iterator i = movesTree.begin(); i != movesTree.end(); ++i) {
+            dataFileOut << *i << ' ' << endl;
+            dataFileOut << "le test de bucheron" << endl;
+        }
+        dataFileOut << "\n" << endl;
+        }
+        else {
+            cout << "Failed to open the file :(" << endl;
+        }
+    }
+    dataFileOut.close();
+}
+
+
+bool DataFileStorage::loadGame() {
     return true;
 }

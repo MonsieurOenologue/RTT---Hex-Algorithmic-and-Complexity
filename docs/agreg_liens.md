@@ -15,5 +15,11 @@
 - [Explications sur les grilles hexagonales](http://www.redblobgames.com/grids/hexagons/)
 - [Coordonnées dans les grilles à base d'hexagones](https://www.gamedev.net/resources/_/technical/game-programming/coordinates-in-hexagon-based-tile-maps-r1800)
 
+## Algorithmique/IA/Apprentissage
+### Bruteforce
+- [Une implémentation du Bruteforce](https://www.programmingalgorithms.com/algorithm/brute-force?lang=C%23)
+- [Quelques définitions](http://faculty.simpson.edu/lydia.sinapova/www/cmsc250/LN250_Levitin/L05-BruteForce.htm)
+- [Document complet avec exemples illustrés](http://sweet.ua.pt/jmadeira/daa/DAA_02_Brute_Force.pdf)
+
 ## Autres
 - [HEX - Guide stratégique](http://gcrhoads.byethost4.com/GamesPuzzles/Basic.html?i=1#Blocking_moves)

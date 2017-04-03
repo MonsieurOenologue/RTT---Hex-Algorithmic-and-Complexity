@@ -15,7 +15,7 @@ private :
 
 
 public :
-            Bruteforce();
+            bool Bruteforce();
             ~Bruteforce();
 };
 

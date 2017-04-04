@@ -15,6 +15,7 @@ using namespace std;
 class DataFileStorage {
 private :
     fstream dataFile;
+    HexBoard hexBoard;
 public :
             DataFileStorage();
             ~DataFileStorage();

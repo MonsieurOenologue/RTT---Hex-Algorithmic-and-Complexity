@@ -1,20 +1,6 @@
 # Declaration of variables
 CC = g++
 
-INCLUDES = -I$(glfw_inc) -I$(glad_inc)
-LIBRARIES = -L$(glfw_lib)
-
-glfw = C:/MinGW
-glfw_inc = $(glfw)/include/GLFW
-glfw_lib = $(glfw)/lib
-
-glad = C:/MinGW
-glad_inc = $(glad)/include/glad
-
-GL_FLAGS = -ggdb -O3 $(INCLUDES)
-GL_LIBS = $(LIBRARIES) -lglfw3 -lopengl32 -lglu32 -lgdi32
-CC_FLAGS = -Wall -Wextra -fexceptions -std=c++11 -pthread $(GL_FLAGS)
-
 # File names
 EXEC = Hexxxor3000.exe
 SOURCES = $(wildcard *.cpp)
@@ -30,10 +16,38 @@ OBJECTS = GameController.o HexBoard.o Action.o glad.o
 ifeq ($(OS),Windows_NT)
     OS_TYPE := Windows
     RM := del -f
+	INCLUDES = -I$(glfw_inc) -I$(glad_inc)
+	LIBRARIES = -L$(glfw_lib)
+
+	glfw = C:/MinGW
+	glfw_inc = $(glfw)/include/GLFW
+	glfw_lib = $(glfw)/lib
+
+	glad = C:/MinGW
+	glad_inc = $(glad)/include/glad
+
+	GL_FLAGS = -ggdb -O3 $(INCLUDES)
+	GL_LIBS = $(LIBRARIES) -lglfw3 -lopengl32 -lglu32 -lgdi32
+	CC_FLAGS = -Wall -Wextra -fexceptions -std=c++11 -pthread $(GL_FLAGS)
 else
     OS_TYPE := $(shell uname -s)
     RM := rm -f
+
+	INCLUDES = -I$(glfw_inc) -I$(glad_inc)
+	LIBRARIES = -L$(glfw_lib)
+
+	glfw = /usr/local/include
+	glfw_inc = $(glfw)/GLFW
+	glfw_lib = /usr/local/lib/
+
+	glad = /usr/local/include
+	glad_inc = /usr/local/include
+
+	GL_LIBS = $(LIBRARIES) -lglfw3 -ldl -framework Cocoa -framework OpenGL -framework IOKit -framework CoreFoundation -framework CoreVideo
 endif
+
+	GL_FLAGS = -ggdb -O3 $(INCLUDES)
+	CC_FLAGS = -Wall -Wextra -fexceptions -std=c++11 -pthread $(GL_FLAGS)
 
 # Function used to check variables. Use on the command line:
 # make print-VARNAME

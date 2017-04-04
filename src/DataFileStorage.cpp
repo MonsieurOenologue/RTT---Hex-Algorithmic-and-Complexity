@@ -68,13 +68,20 @@ void DataFileStorage::saveDataFile(vector<char> movesTree , string playerR ,stri
     dataFileOut.open("DataFromPlays.csv", fstream::in |  fstream::out | fstream::app);
         if (dataFileOut.is_open()){
         cout << "File has been opened properly";
-        dataFileOut << playerR+"\n" << endl;
-        dataFileOut << playerL+"\n" << endl;
+
+        //Write the name of the two players
+        dataFileOut << playerR+", ";
+        dataFileOut << playerL+", ";
+
+        //Browse the tree and display the values for each turn played
         for (vector<char>::const_iterator i = movesTree.begin(); i != movesTree.end(); ++i) {
-            dataFileOut << *i << ' ' << endl;
-            dataFileOut << "le test de bucheron" << endl;
+            //dataFileOut << *i << ", ";
+            char x = ceil(*i / hexBoard.getLength()), y = *i % hexBoard.getLength();
+            dataFileOut << x << y << ", ";
+            //dataFileOut << "le test de bucheron" << endl;
         }
-        dataFileOut << "\n" << endl;
+
+        dataFileOut << "\n";
         }
         else {
             cout << "Failed to open the file :(" << endl;

@@ -103,7 +103,7 @@ static void mouse_button_callback(GLFWwindow* window, int key, int action, int m
 
                 if(moves.setPosition(xpos, ypos, c)) {
                     moves.displayBoard();
-                    cout << "Position plateau : (" << xpos << ", " << ypos << ")" << endl;
+                    cout << "Position pion : " << (char)(ypos+65) << (char)(xpos+97) << endl;
                     player1 = !player1;
                 } else {
                     cerr << "Coup impossible, veuillez recommencer..." << endl;
@@ -161,10 +161,22 @@ int main() {
     player1 = true;
     srand(time(NULL));
     string playerR, playerL;
-    cout << "Tooltip : \"RandAI\" jouera aléatoirement." << endl
+    cout << "Tooltip : \"RandAI\" jouera aleatoirement." << endl
          << "Entrez le nom des joueurs 1 et 2 :";
     cin >> playerR >> playerL;
     moves.setPlayers(playerR, playerL);
+    cout << "Entrez la taille du plateau de jeu : ";
+    short nL;
+    cin >> nL;
+    if(nL < 3 || nL > 14) {
+        cerr << "Taille '" << nL << "' impossible..." << endl
+             << "Nouvelle Taille : 11" << endl;
+        nL = 11;
+    } else {
+        cout << "Taille : " << nL << endl;
+        length = nL;
+    }
+    moves.setLength(length);
     moves.displayBoard();
 
     thread console(play, playerR, playerL);

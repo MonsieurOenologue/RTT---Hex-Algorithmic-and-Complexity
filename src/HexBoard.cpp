@@ -40,6 +40,10 @@ HexBoard::~HexBoard() {
 }
 
 void HexBoard::setLength(char newLength) {
+    board.resize(newLength);
+    for(char i = 0; i < newLength; ++i) {
+        board[i] = string(newLength, ' ');
+    }
     length = newLength;
 }
 

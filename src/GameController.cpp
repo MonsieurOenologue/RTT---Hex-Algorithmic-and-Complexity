@@ -5,6 +5,7 @@
 
 #include <math.h>
 #include <thread>
+#include <mutex>
 
 #define M_PI 3.14159265358979323846
 
@@ -21,6 +22,10 @@ using namespace std;
  *  @section DESCRIPTION
  *
  */
+
+mutex playTurn;
+Action moves;
+bool player1;
 
 char factor = 1, length = 11;
 float offsetX = 0, offsetY = 0;
@@ -84,9 +89,28 @@ static void mouse_button_callback(GLFWwindow* window, int key, int action, int m
     double xpos, ypos;
     if(key == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
         glfwGetCursorPos(window, &xpos, &ypos);
-        cout << "Mouse pos : (" << xpos << ", " << ypos << ")" << endl;
+        //cout << "Position souris : (" << xpos << ", " << ypos << ")" << endl;
         pixel_to_hex(xpos, ypos);
-        cout << "Board pos : (" << xpos << ", " << ypos << ")" << endl;
+        //cout << "Position plateau : (" << xpos << ", " << ypos << ")" << endl;
+        if(xpos < 0 || xpos > length-1 || ypos < 0 || ypos > length-1) {
+            cerr << "Erreur : les coordonnees (" << xpos << "," << ypos << ") sortent du plateau de jeu." << endl;
+        } else {
+            if(!playTurn.try_lock()) cerr << "Error : Can't lock playTurn#0" << endl;
+            else {
+                char c;
+                if(player1) c = 'x';
+                else c = 'o';
+
+                if(moves.setPosition(xpos, ypos, c)) {
+                    moves.displayBoard();
+                    cout << "Position plateau : (" << xpos << ", " << ypos << ")" << endl;
+                    player1 = !player1;
+                } else {
+                    cerr << "Coup impossible, veuillez recommencer..." << endl;
+                }
+                playTurn.unlock();
+            }
+        }
     }
 }
 
@@ -97,37 +121,44 @@ void glInit() {
     glClearColor(1.0, 1.0, 1.0, 1.0);
 }
 
-void play(Action moves, string playerR, string playerL, bool player1) {
+void play(string playerR, string playerL) {
     char randX, randY;
-    if(player1) {
-        cout << "C'est au tour de " << playerR << ".\nEntrez la position de votre pion (colonne 'espace' ligne) : ";
-        if(playerR == "RandAI") {
-            do {
-                randX = rand() % moves.getLength();
-                randY = rand() % moves.getLength();
-            } while(!moves.setPosition(randX, randY, 'x'));
-        } else moves.nextMove('x');
-        player1 = false;
-    } else {
-        cout << "C'est au tour de " << playerL << ".\nEntrez la position de votre pion (colonne 'espace' ligne) : ";
-        if(playerL == "RandAI") {
-            do {
-                randX = rand() % moves.getLength();
-                randY = rand() % moves.getLength();
-            } while(!moves.setPosition(randX, randY, 'o'));
-        } else moves.nextMove('o');
-        player1 = true;
+    while(moves.continueGame()) {
+        if(player1) {
+            cout << "C'est au tour de " << playerR << ".\nEntrez la position de votre pion (colonne 'espace' ligne) :" << endl;
+            if(playerR == "RandAI") {
+                playTurn.lock();
+                do {
+                    randX = rand() % moves.getLength();
+                    randY = rand() % moves.getLength();
+                } while(!moves.setPosition(randX, randY, 'x'));
+            } else {
+                playTurn.unlock();
+                moves.nextMove('x');
+                if(!playTurn.try_lock()) cerr << "Error : Can't lock playTurn#1" << endl;
+            }
+            player1 = false;
+        } else {
+            cout << "C'est au tour de " << playerL << ".\nEntrez la position de votre pion (colonne 'espace' ligne) :" << endl;
+            if(playerL == "RandAI") {
+                playTurn.lock();
+                do {
+                    randX = rand() % moves.getLength();
+                    randY = rand() % moves.getLength();
+                } while(!moves.setPosition(randX, randY, 'o'));
+            } else {
+                playTurn.unlock();
+                moves.nextMove('o');
+                if(!playTurn.try_lock()) cerr << "Error : Can't lock playTurn#2" << endl;
+            }
+            player1 = true;
+        }
+        moves.displayBoard();
     }
-    moves.displayBoard();
 }
 
 int main() {
-    // Debug attempt (compiling but not running)
-    fprintf(stderr, "Hello world!\n");
-    fflush(stderr);
-
-    Action moves;
-    bool player1 = true;
+    player1 = true;
     srand(time(NULL));
     string playerR, playerL;
     cout << "Tooltip : \"RandAI\" jouera aléatoirement." << endl
@@ -136,8 +167,7 @@ int main() {
     moves.setPlayers(playerR, playerL);
     moves.displayBoard();
 
-    thread console(play, moves, playerR, playerL, player1);
-    console.join();
+    thread console(play, playerR, playerL);
 
 	GLFWwindow *window;
 
@@ -207,6 +237,8 @@ int main() {
 	}
 	glfwDestroyWindow(window);
 	glfwTerminate();
+
+	console.join();
 
     if(player1) {
         cout << endl << "Victoire du joueur " << playerL << "." << endl;

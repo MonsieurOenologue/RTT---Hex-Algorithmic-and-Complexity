@@ -102,7 +102,7 @@ static void mouse_button_callback(GLFWwindow* window, int key, int action, int m
         if(xpos < 0 || xpos > length-1 || ypos < 0 || ypos > length-1) {
             cerr << "Erreur : les coordonnees (" << xpos << "," << ypos << ") sortent du plateau de jeu." << endl;
         } else {
-            if(!playing.try_lock()) cerr << "Error : BAD ACCESS OF LOCK in \"mouse_button_callback()\"" << endl;
+            while(!playing.try_lock()) Sleep(100);
             char c = (player1) ? 'x' : 'o';
 
             if(moves.setPosition(xpos, ypos, c)) {
@@ -135,25 +135,31 @@ void play() {
                 randX = rand() % length;
                 randY = rand() % length;
             } while(!moves.setPosition(randX, randY, v));
+            turnPlayed = true;
         } else {
             if(playConsole) {
                 cout << "Entrez la position de votre pion (colonne + ligne) :" << endl;
                 playing.lock();
                 moves.nextMove(v);
+                turnPlayed = true;
                 playing.unlock();
             } else {
                 cout << "Cliquez sur la position de votre pion dans l'interface :" << endl;
-                if(!playing.try_lock()) cerr << "Error : BAD ACCESS#0 OF LOCK in \"play()\"" << endl;
+                while(!playing.try_lock()) Sleep(100);
                 while(!turnPlayed) {
+                    if(playConsole) break;
                     playing.unlock();
-                    Sleep(250);
-                    if(!playing.try_lock()) cerr << "Error : BAD ACCESS#1 OF LOCK in \"play()\"" << endl;
+                    while(!playing.try_lock()) Sleep(100);
                 }
             }
         }
-        player1 = !player1;
-        moves.displayBoard();
-        displayText();
+        if(turnPlayed) {
+            player1 = !player1;
+            displayText();
+        } else {
+            v ^= 'x'^'o';
+            cout << endl;
+        }
         playing.unlock();
     }
     keepGoing = false;
@@ -243,7 +249,7 @@ int main() {
         glColorPointer(C_SIZE, GL_FLOAT, 0, colors);
 
         // Draw stuff
-        glDrawElements(GL_LINE_STRIP, N_VERTS, GL_UNSIGNED_INT, index);
+        glDrawElements(GL_POLYGON, N_VERTS, GL_UNSIGNED_INT, index);
 
         // Disable vertex table
         glDisableClientState(GL_COLOR_ARRAY);
@@ -260,7 +266,11 @@ int main() {
 	glfwDestroyWindow(window);
 	glfwTerminate();
 
-	playConsole = true;
+	if(keepGoing) {
+        while(!playing.try_lock()) Sleep(100);
+        playConsole = true;
+        playing.unlock();
+	}
 	console.join();
 
     if(player1) {

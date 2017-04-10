@@ -100,7 +100,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 static void mouse_button_callback(GLFWwindow* window, int key, int action, int mods) {
     double xpos, ypos;
-    if(!playConsole && key == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+    if(!playConsole && !turnPlayed && key == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
         glfwGetCursorPos(window, &xpos, &ypos);
         //cout << "Position souris : (" << xpos << ", " << ypos << ")" << endl;
         pixel_to_hex(xpos, ypos);

@@ -29,6 +29,7 @@ public :
             ~HexBoard();
     void    setLength(char newLength);
     char    getLength();
+    char    getLatestMove();
     void    setNbPawnsPlayed(char newNbPawnsPlayed);
     char    getNbPawnsPlayed();
     void    setPlayers(string playerL, string playerR);

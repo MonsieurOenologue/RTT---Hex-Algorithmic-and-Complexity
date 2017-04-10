@@ -23,9 +23,10 @@ using namespace std;
  *
  */
 
-mutex playTurn;
 Action moves;
-bool player1;
+mutex playing;
+bool player1, turnPlayed, playConsole, keepGoing;
+string playerR, playerL;
 
 char factor = 1, length = 11;
 float offsetX = 0, offsetY = 0;
@@ -75,6 +76,12 @@ void glDrawFlatI(int maxWidth, int maxHeight) {
     }
 }
 
+void displayText() {
+    char latestMove = moves.getLatestMove();
+    moves.displayBoard();
+    cout << "Position du pion : " << (char)(latestMove % length+65) << (char)(ceil(latestMove / length)+97) << endl << endl;
+}
+
 static void error_callback(int error, const char* description) {
     cerr << "Error#" << error << ": " << description << endl;
 }
@@ -87,7 +94,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 static void mouse_button_callback(GLFWwindow* window, int key, int action, int mods) {
     double xpos, ypos;
-    if(key == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+    if(!playConsole && key == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
         glfwGetCursorPos(window, &xpos, &ypos);
         //cout << "Position souris : (" << xpos << ", " << ypos << ")" << endl;
         pixel_to_hex(xpos, ypos);
@@ -95,21 +102,15 @@ static void mouse_button_callback(GLFWwindow* window, int key, int action, int m
         if(xpos < 0 || xpos > length-1 || ypos < 0 || ypos > length-1) {
             cerr << "Erreur : les coordonnees (" << xpos << "," << ypos << ") sortent du plateau de jeu." << endl;
         } else {
-            if(!playTurn.try_lock()) cerr << "Error : Can't lock playTurn#0" << endl;
-            else {
-                char c;
-                if(player1) c = 'x';
-                else c = 'o';
+            if(!playing.try_lock()) cerr << "Error : BAD ACCESS OF LOCK in \"mouse_button_callback()\"" << endl;
+            char c = (player1) ? 'x' : 'o';
 
-                if(moves.setPosition(xpos, ypos, c)) {
-                    moves.displayBoard();
-                    cout << "Position pion : " << (char)(ypos+65) << (char)(xpos+97) << endl;
-                    player1 = !player1;
-                } else {
-                    cerr << "Coup impossible, veuillez recommencer..." << endl;
-                }
-                playTurn.unlock();
+            if(moves.setPosition(xpos, ypos, c)) {
+                turnPlayed = true;
+            } else {
+                cerr << "Coup impossible, veuillez recommencer..." << endl;
             }
+            playing.unlock();
         }
     }
 }
@@ -121,49 +122,55 @@ void glInit() {
     glClearColor(1.0, 1.0, 1.0, 1.0);
 }
 
-void play(string playerR, string playerL) {
-    char randX, randY;
+void play() {
+    char randX, randY, v = 'o';
+    string currentPlayer;
     while(moves.continueGame()) {
-        if(player1) {
-            cout << "C'est au tour de " << playerR << ".\nEntrez la position de votre pion (colonne 'espace' ligne) :" << endl;
-            if(playerR == "RandAI") {
-                playTurn.lock();
-                do {
-                    randX = rand() % moves.getLength();
-                    randY = rand() % moves.getLength();
-                } while(!moves.setPosition(randX, randY, 'x'));
-            } else {
-                playTurn.unlock();
-                moves.nextMove('x');
-                if(!playTurn.try_lock()) cerr << "Error : Can't lock playTurn#1" << endl;
-            }
-            player1 = false;
+        turnPlayed = false;
+        currentPlayer = ((player1) ? playerR : playerL);
+        v ^= 'x'^'o';
+        cout << "C'est au tour de " << currentPlayer << "." << endl;
+        if(currentPlayer == "RandAI") {
+            do {
+                randX = rand() % length;
+                randY = rand() % length;
+            } while(!moves.setPosition(randX, randY, v));
         } else {
-            cout << "C'est au tour de " << playerL << ".\nEntrez la position de votre pion (colonne 'espace' ligne) :" << endl;
-            if(playerL == "RandAI") {
-                playTurn.lock();
-                do {
-                    randX = rand() % moves.getLength();
-                    randY = rand() % moves.getLength();
-                } while(!moves.setPosition(randX, randY, 'o'));
+            if(playConsole) {
+                cout << "Entrez la position de votre pion (colonne + ligne) :" << endl;
+                playing.lock();
+                moves.nextMove(v);
+                playing.unlock();
             } else {
-                playTurn.unlock();
-                moves.nextMove('o');
-                if(!playTurn.try_lock()) cerr << "Error : Can't lock playTurn#2" << endl;
+                cout << "Cliquez sur la position de votre pion dans l'interface :" << endl;
+                if(!playing.try_lock()) cerr << "Error : BAD ACCESS#0 OF LOCK in \"play()\"" << endl;
+                while(!turnPlayed) {
+                    playing.unlock();
+                    Sleep(250);
+                    if(!playing.try_lock()) cerr << "Error : BAD ACCESS#1 OF LOCK in \"play()\"" << endl;
+                }
             }
-            player1 = true;
         }
+        player1 = !player1;
         moves.displayBoard();
+        displayText();
+        playing.unlock();
     }
+    keepGoing = false;
 }
 
 int main() {
     player1 = true;
     srand(time(NULL));
-    string playerR, playerL;
-    cout << "Tooltip : \"RandAI\" jouera aleatoirement." << endl
-         << "Entrez le nom des joueurs 1 et 2 :";
-    cin >> playerR >> playerL;
+    cout << "Bienvenue sur Hexxxor3000!" << endl
+         << "Voulez-vous jouer dans la console (c : defaut) ou dans l'interface (i) ?" << endl;
+    cin >> playerR;
+    playConsole = (playerR[0] != 'i');
+    cout << "Aide : \"RandAI\" jouera aleatoirement." << endl
+         << "Entrez le nom du joueur 1 : ";
+    cin >> playerR;
+    cout << "Entrez le nom du joueur 2 : ";
+    cin >> playerL;
     moves.setPlayers(playerR, playerL);
     cout << "Entrez la taille du plateau de jeu : ";
     short nL;
@@ -178,8 +185,10 @@ int main() {
     }
     moves.setLength(length);
     moves.displayBoard();
+    turnPlayed = false;
+    keepGoing = true;
 
-    thread console(play, playerR, playerL);
+    thread console(play);
 
 	GLFWwindow *window;
 
@@ -213,7 +222,7 @@ int main() {
     glfwSetWindowPos(window, (screenWidth - windowWidth) / 2, (screenHeight - windowHeight) / 2);
 	glInit();
 
-	while(!glfwWindowShouldClose(window)) {
+	while(!glfwWindowShouldClose(window) && keepGoing) {
 		// Scale to window size
 		glfwGetWindowSize(window, &windowWidth, &windowHeight);
 		glViewport(0, 0, windowWidth, windowHeight);
@@ -245,11 +254,13 @@ int main() {
 		glfwSwapBuffers(window);
 
 		// Wait for any input, or window movement
-		glfwWaitEvents();
+		glfwWaitEventsTimeout(0.25);
 	}
+
 	glfwDestroyWindow(window);
 	glfwTerminate();
 
+	playConsole = true;
 	console.join();
 
     if(player1) {

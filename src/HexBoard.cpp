@@ -51,6 +51,10 @@ char HexBoard::getLength() {
     return length;
 }
 
+char HexBoard::getLatestMove() {
+    return latestMove;
+}
+
 void HexBoard::setNbPawnsPlayed(char newNbPawnsPlayed) {
     nbPawnsPlayed = newNbPawnsPlayed;
 }

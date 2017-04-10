@@ -25,7 +25,7 @@ vector<char> Action::getMovesTree() {
     return movesTree;
 }
 
-char Action::getLatestMove() {
+char Action::pullLatestMove() {
     char latestMove = movesTree[movesTree.size()-1];
     movesTree.resize(movesTree.size()-1);
     return latestMove;

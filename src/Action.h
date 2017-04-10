@@ -20,7 +20,7 @@ public :
                     ~Action();
     void            giveUp();
     vector<char>    getMovesTree();
-    char            getLatestMove();
+    char            pullLatestMove();
     bool            nextMove(char);
     bool            undoMove();
 };

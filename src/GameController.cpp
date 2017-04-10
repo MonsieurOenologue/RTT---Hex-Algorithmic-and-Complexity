@@ -78,13 +78,6 @@ void glDrawFlatI(int maxWidth, int maxHeight) {
 
 void displayText() {
     char latestMove = moves.getLatestMove(), x = ceil(latestMove / length), y = latestMove % length;
-    if(player1) {
-        colors[(x * length + y) * 3 + 1] = 0;
-        colors[(x * length + y) * 3 + 2] = 0;
-    } else {
-        colors[(x * length + y) * 3] = 0;
-        colors[(x * length + y) * 3 + 1] = 0;
-    }
     moves.displayBoard();
     cout << "Position du pion : " << (char)(y+65) << (char)(x+97) << endl << endl;
 }
@@ -113,6 +106,13 @@ static void mouse_button_callback(GLFWwindow* window, int key, int action, int m
             char c = (player1) ? 'x' : 'o';
 
             if(moves.setPosition(xpos, ypos, c)) {
+                if(player1) {
+                    colors[(int)(xpos * length + ypos) * 3 + 1] = 0;
+                    colors[(int)(xpos * length + ypos) * 3 + 2] = 0;
+                } else {
+                    colors[(int)(xpos * length + ypos) * 3] = 0;
+                    colors[(int)(xpos * length + ypos) * 3 + 1] = 0;
+                }
                 turnPlayed = true;
             } else {
                 cerr << "Coup impossible, veuillez recommencer..." << endl;
@@ -284,7 +284,6 @@ int main() {
         playing.unlock();
 	}
 	console.join();
-	playConsole = true;
 
     if(player1) {
         cout << endl << "Victoire du joueur " << playerL << "." << endl;

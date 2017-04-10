@@ -25,11 +25,11 @@ using namespace std;
 
 Action moves;
 mutex playing;
-bool player1, turnPlayed, playConsole, keepGoing;
+bool player1, turnPlayed, playConsole, keepGoing, color;
 string playerR, playerL;
 
 char factor = 1, length = 11;
-float offsetX = 0, offsetY = 0;
+float offsetX = 0, offsetY = 0, *colors;
 
 float hex_corner_angle(char i) {
     short angle_deg = 60 * i + 30;
@@ -52,11 +52,11 @@ void pixel_to_hex(double &x, double &y) {
 
 void glDrawHexagon(float width, float height) {
     float angle;
-    glBegin(GL_LINE_LOOP);
-        for(char i = 0; i < 6; ++i) {
-            angle = hex_corner_angle(i);
-            glVertex2i(hex_cornerX(angle, width), hex_cornerY(angle, height));
-        }
+    (color) ? glBegin(GL_POLYGON) : glBegin(GL_LINE_LOOP);
+    for(char i = 0; i < 6; ++i) {
+        angle = hex_corner_angle(i);
+        glVertex2i(hex_cornerX(angle, width), hex_cornerY(angle, height));
+    }
     glEnd();
 }
 
@@ -64,11 +64,11 @@ void glDrawFlatI(int maxWidth, int maxHeight) {
     float width = sqrt(3) * length * (length + 1 + length / 2), height = length * (length + 1) * 1.5;
     char i, j;
     for(factor = 1; width * (factor+1) < maxWidth && height * (factor+1) < maxHeight; ++factor);
-    glColor3f(0, 0, 0);
     offsetX = length * 1.5 * factor;
     offsetY = sqrt(3) * length * (3 / 2) * factor;
     for(i = 0, height = offsetX; i < length; ++i) {
         for(j = 0, width = i * sqrt(3) / 2 * length * factor + offsetY; j < length; ++j) {
+            (color) ? glColor3f(colors[(i*length+j)*3], colors[(i*length+j)*3+1], colors[(i*length+j)*3+2]) : glColor3f(0, 0, 0);
             glDrawHexagon(width, height);
             width += sqrt(3) * length * factor;
         }
@@ -77,9 +77,16 @@ void glDrawFlatI(int maxWidth, int maxHeight) {
 }
 
 void displayText() {
-    char latestMove = moves.getLatestMove();
+    char latestMove = moves.getLatestMove(), x = ceil(latestMove / length), y = latestMove % length;
+    if(player1) {
+        colors[(x * length + y) * 3 + 1] = 0;
+        colors[(x * length + y) * 3 + 2] = 0;
+    } else {
+        colors[(x * length + y) * 3] = 0;
+        colors[(x * length + y) * 3 + 1] = 0;
+    }
     moves.displayBoard();
-    cout << "Position du pion : " << (char)(latestMove % length+65) << (char)(ceil(latestMove / length)+97) << endl << endl;
+    cout << "Position du pion : " << (char)(y+65) << (char)(x+97) << endl << endl;
 }
 
 static void error_callback(int error, const char* description) {
@@ -154,8 +161,8 @@ void play() {
             }
         }
         if(turnPlayed) {
-            player1 = !player1;
             displayText();
+            player1 = !player1;
         } else {
             v ^= 'x'^'o';
             cout << endl;
@@ -193,6 +200,8 @@ int main() {
     moves.displayBoard();
     turnPlayed = false;
     keepGoing = true;
+    colors = new float[length * length * 3];
+    for(nL = 0; nL < length * length * 3; ++nL) colors[nL] = 1;
 
     thread console(play);
 
@@ -238,6 +247,9 @@ int main() {
         glLoadIdentity();
 
 		glOrtho(0, windowWidth, windowHeight, 0, 0, 1);
+		color = true;
+		glDrawFlatI(windowWidth, windowHeight);
+		color = false;
 		glDrawFlatI(windowWidth, windowHeight);
 
 		// Enable vertex table
@@ -272,12 +284,17 @@ int main() {
         playing.unlock();
 	}
 	console.join();
+	playConsole = true;
 
     if(player1) {
         cout << endl << "Victoire du joueur " << playerL << "." << endl;
     } else {
         cout << endl << "Victoire du joueur " << playerR << "." << endl;
     }
+
+    cout << endl << "A la prochaine sur Hexxxor3000!\nAppuyez sur une touche pour quitter le programme...";
+    cin.sync();
+    cin.get();
 
     return 0;
 }

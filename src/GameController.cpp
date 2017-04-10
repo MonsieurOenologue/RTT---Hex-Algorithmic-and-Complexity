@@ -3,11 +3,23 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#ifdef __APPLE__
+#include <unistd.h>
+#elif defined __unix__
+#include <unistd.h>
+#elif defined _WIN32
+# include <windows.h>
+#define sleep(x) Sleep(1000 * x)
+#endif
+
 #include <math.h>
 #include <thread>
 #include <mutex>
 
+
+
 #define M_PI 3.14159265358979323846
+
 
 using namespace std;
 
@@ -102,7 +114,7 @@ static void mouse_button_callback(GLFWwindow* window, int key, int action, int m
         if(xpos < 0 || xpos > length-1 || ypos < 0 || ypos > length-1) {
             cerr << "Erreur : les coordonnees (" << xpos << "," << ypos << ") sortent du plateau de jeu." << endl;
         } else {
-            while(!playing.try_lock()) Sleep(100);
+            while(!playing.try_lock()) sleep(0.1);
             char c = (player1) ? 'x' : 'o';
 
             if(moves.setPosition(xpos, ypos, c)) {
@@ -152,11 +164,11 @@ void play() {
                 playing.unlock();
             } else {
                 cout << "Cliquez sur la position de votre pion dans l'interface :" << endl;
-                while(!playing.try_lock()) Sleep(100);
+                while(!playing.try_lock()) sleep(0.1);
                 while(!turnPlayed) {
                     if(playConsole) break;
                     playing.unlock();
-                    while(!playing.try_lock()) Sleep(100);
+                    while(!playing.try_lock()) sleep(0.1);
                 }
             }
         }
@@ -279,7 +291,7 @@ int main() {
 	glfwTerminate();
 
 	if(keepGoing) {
-        while(!playing.try_lock()) Sleep(100);
+        while(!playing.try_lock()) sleep(0.1);
         playConsole = true;
         playing.unlock();
 	}

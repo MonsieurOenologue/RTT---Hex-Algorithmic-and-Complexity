@@ -88,12 +88,6 @@ void glDrawFlatI(int maxWidth, int maxHeight) {
     }
 }
 
-void displayText() {
-    char latestMove = moves.getLatestMove(), x = ceil(latestMove / length), y = latestMove % length;
-    moves.displayBoard();
-    cout << "Position du pion : " << (char)(y+65) << (char)(x+97) << endl << endl;
-}
-
 static void error_callback(int error, const char* description) {
     cerr << "Error#" << error << ": " << description << endl;
 }
@@ -118,13 +112,6 @@ static void mouse_button_callback(GLFWwindow* window, int key, int action, int m
             char c = (player1) ? 'x' : 'o';
 
             if(moves.setPosition(xpos, ypos, c)) {
-                if(player1) {
-                    colors[(int)(xpos * length + ypos) * 3 + 1] = 0;
-                    colors[(int)(xpos * length + ypos) * 3 + 2] = 0;
-                } else {
-                    colors[(int)(xpos * length + ypos) * 3] = 0;
-                    colors[(int)(xpos * length + ypos) * 3 + 1] = 0;
-                }
                 turnPlayed = true;
             } else {
                 cerr << "Coup impossible, veuillez recommencer..." << endl;
@@ -142,7 +129,7 @@ void glInit() {
 }
 
 void play() {
-    char randX, randY, v = 'o';
+    char x, y, v = 'o', latestMove;
     string currentPlayer;
     while(moves.continueGame()) {
         turnPlayed = false;
@@ -151,9 +138,9 @@ void play() {
         cout << "C'est au tour de " << currentPlayer << "." << endl;
         if(currentPlayer == "RandAI") {
             do {
-                randX = rand() % length;
-                randY = rand() % length;
-            } while(!moves.setPosition(randX, randY, v));
+                x = rand() % length;
+                y = rand() % length;
+            } while(!moves.setPosition(x, y, v));
             turnPlayed = true;
         } else {
             if(playConsole) {
@@ -173,7 +160,18 @@ void play() {
             }
         }
         if(turnPlayed) {
-            displayText();
+            latestMove = moves.getLatestMove();
+            x = ceil(latestMove / length);
+            y = latestMove % length;
+            if(player1) {
+                colors[(x * length + y) * 3 + 1] = 0;
+                colors[(x * length + y) * 3 + 2] = 0;
+            } else {
+                colors[(x * length + y) * 3] = 0;
+                colors[(x * length + y) * 3 + 1] = 0;
+            }
+            moves.displayBoard();
+            cout << "Position du pion : " << (char)(y+65) << (char)(x+97) << endl << endl;
             player1 = !player1;
         } else {
             v ^= 'x'^'o';

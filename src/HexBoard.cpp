@@ -90,7 +90,7 @@ bool HexBoard::swapRule() {
 bool HexBoard::continueGame() {
     path = 0;
     char x = ceil(latestMove / length), y = latestMove % length;
-    return victoryByRecursion(x,y);
+    return !victoryByRecursion(x,y);
 }
 
 void HexBoard::displayBoard() {
@@ -179,39 +179,64 @@ bool HexBoard::victoryByLinksMemory(char p) {
 }
 
 bool HexBoard::victoryByRecursion(char x, char y) {
-    if(board[x][y] == ' ') return true;
-    return (victoryByRecursion(x, y, board[x][y]) != 3);
+    if(board[x][y] == ' ') return false;
+    return (victoryByRecursion(x, y, board[x][y]) == 3);
 }
 
 char HexBoard::victoryByRecursion(char x, char y, char p) {
-    if(nbPawnsPlayed < length * 2 - 1) return path;
-    if(path % 3 != 1 && board[x][y] == p && x == 0 ) {
-        path += 1;
-    } else if(path % 3 != 2 && board[x][y] == p && x == length - 1 ) {
-        path += 2;
+    if(nbPawnsPlayed < length * 2 - 1) {
+        return 0;
     }
-    if(path == 3) return path;
+    if(path != 3 && path % 3 != 1 && ((x == 0 && p == 'x') || (y == 0 && p == 'o'))) {
+       path++;
+    }
+    if(path != 3 && path % 3 != 2 && ((x == length - 1 && p == 'x') || (y == length - 1 && p == 'o'))) {
+       path += 2;
+    }
+    if(path == 3) {
+        return path;
+    }
 
     board[x][y]++;
-    if(x != 0 && y + 1 != length && board[x-1][y+1] == p) {
-        path = victoryByRecursion(x-1, y+1, p);
+
+    if(x != 0) {
+        if(board[x-1][y] == p) {
+            if((path = victoryByRecursion(x-1, y, p)) == 3) {
+                board[x][y]--;
+                return path;
+            }
+        }
+        if(y+1 < length && board[x-1][y+1] == p) {
+            if((path = victoryByRecursion(x-1, y+1, p)) == 3) {
+                board[x][y]--;
+                return path;
+            }
+        }
     }
-    if(path != 3 && x != 0 && board[x-1][y] == p) {
-        path = victoryByRecursion(x-1, y, p);
+    if(x + 1 != length) {
+        if(board[x+1][y] == p) {
+            if((path = victoryByRecursion(x+1, y, p)) == 3) {
+                board[x][y]--;
+                return path;
+            }
+        }
+        if(y != 0 && board[x+1][y-1] == p) {
+            if((path = victoryByRecursion(x+1, y-1, p)) == 3) {
+                board[x][y]--;
+                return path;
+            }
+        }
     }
-    if(path != 3 && x + 1 != length && board[x+1][y] == p) {
-        path = victoryByRecursion(x+1, y, p);
+    if(y != 0 && board[x][y-1] == p) {
+        if((path = victoryByRecursion(x, y-1, p)) == 3) {
+            board[x][y]--;
+            return path;
+        }
     }
-    if(path != 3 && x + 1 != length && y != 0 && board[x+1][y-1] == p)  {
-        path = victoryByRecursion(x+1, y-1, p);
-    }
-    if(path != 3 && y != 0 && board[x][y-1] == p) {
-        path = victoryByRecursion(x, y-1, p);
-    }
-    if(path != 3 && y + 1 != length && board[x][y+1] == p) {
+    if(y + 1 != length && board[x][y+1] == p) {
         path = victoryByRecursion(x, y+1, p);
     }
-    board[x][y]--;
 
+    board[x][y]--;
     return path;
 }

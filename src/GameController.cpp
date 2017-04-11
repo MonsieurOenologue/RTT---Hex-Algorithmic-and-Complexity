@@ -294,7 +294,9 @@ int main() {
 		glfwSwapBuffers(window);
 
 		// Wait for any input, or window movement
-		(keepGoing) ? glfwWaitEventsTimeout(0.25) : glfwWaitEvents();
+		if(keepGoing)
+            glfwWaitEventsTimeout(0.25);
+		else break;
 	}
 
 	glfwDestroyWindow(window);

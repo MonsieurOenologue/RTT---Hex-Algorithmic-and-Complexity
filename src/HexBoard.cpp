@@ -14,52 +14,48 @@
 HexBoard::HexBoard() {
     length = 11;
     nbPawnsPlayed = 0;
-    latestMove = 0;
-    path = 0;
-    board.resize(11);
     latestMove = '\0';
-    for(char i = 0; i < 11; ++i) {
-        board[i] = string(11, ' ');
-    }
+    path = 0;
+    initBoard();
 }
 
-HexBoard::HexBoard(char newLength) {
+HexBoard::HexBoard(unsigned char newLength) {
     length = newLength;
     nbPawnsPlayed = 0;
-    latestMove = 0;
-    path = 0;
-    board.resize(newLength);
     latestMove = '\0';
-    for(char i = 0; i < newLength; ++i) {
-        board[i] = string(newLength, ' ');
-    }
+    path = 0;
+    initBoard();
 }
 
 HexBoard::~HexBoard() {
     board.clear();
 }
 
-void HexBoard::setLength(char newLength) {
-    board.resize(newLength);
-    for(char i = 0; i < newLength; ++i) {
-        board[i] = string(newLength, ' ');
+void HexBoard::initBoard() {
+    board.resize(length);
+    for(unsigned char i = 0; i < length; ++i) {
+        board[i] = string(length, ' ');
     }
-    length = newLength;
 }
 
-char HexBoard::getLength() {
+void HexBoard::setLength(unsigned char newLength) {
+    length = newLength;
+    initBoard();
+}
+
+unsigned char HexBoard::getLength() {
     return length;
 }
 
-char HexBoard::getLatestMove() {
+unsigned char HexBoard::getLatestMove() {
     return latestMove;
 }
 
-void HexBoard::setNbPawnsPlayed(char newNbPawnsPlayed) {
+void HexBoard::setNbPawnsPlayed(unsigned char newNbPawnsPlayed) {
     nbPawnsPlayed = newNbPawnsPlayed;
 }
 
-char HexBoard::getNbPawnsPlayed() {
+unsigned char HexBoard::getNbPawnsPlayed() {
     return nbPawnsPlayed;
 }
 
@@ -95,7 +91,7 @@ bool HexBoard::continueGame() {
 
 void HexBoard::displayBoard() {
     string flatI = "";
-    char i, j, numbering = 'A';
+    unsigned char i, j, numbering = 'A';
     cout << endl << ' ';
     for(i = 0; i < length; ++i) {
         cout << ' ' << numbering;
@@ -122,16 +118,16 @@ void HexBoard::displayBoard() {
     cout << endl << endl;
 }
 
-bool HexBoard::setPosition(char x, char y, char v) {
-    if(x < 0 || x > length || y < 0 || y > length || (v != ' ' && board[x][y] != ' ')) return false;
+bool HexBoard::setPosition(unsigned char x, unsigned char y, unsigned char v) {
+    if(x < 0 || x >= length || y < 0 || y >= length || (v != ' ' && board[x][y] != ' ')) return false;
     board[x][y] = v;
     nbPawnsPlayed++;
     latestMove = x * length + y;
     return true;
 }
 
-bool HexBoard::pawnConnected(char x, char y) {
-    char v = board[x][y];
+bool HexBoard::pawnConnected(unsigned char x, unsigned char y) {
+    unsigned char v = board[x][y];
     if(x != 0 && (board[x-1][y] == v || (y != length - 1 && board[x-1][y+1] == v))) {
         return true;
     }
@@ -147,8 +143,8 @@ bool HexBoard::pawnConnected(char x, char y) {
     return false;
 }
 
-bool HexBoard::victoryByLinksMemory(char p) {
-    char x = ceil(p / length), y = p % length, v = board[x][y];
+bool HexBoard::victoryByLinksMemory(unsigned char p) {
+    unsigned char x = ceil(p / length), y = p % length, v = board[x][y];
 
     // TO DO : Insert current and linked pawns into matching var if connected to a side.
     if(v == 'x') {
@@ -178,12 +174,12 @@ bool HexBoard::victoryByLinksMemory(char p) {
     return false;
 }
 
-bool HexBoard::victoryByRecursion(char x, char y) {
+bool HexBoard::victoryByRecursion(unsigned char x, unsigned char y) {
     if(board[x][y] == ' ') return false;
     return (victoryByRecursion(x, y, board[x][y]) == 3);
 }
 
-char HexBoard::victoryByRecursion(char x, char y, char p) {
+unsigned char HexBoard::victoryByRecursion(unsigned char x, unsigned char y, unsigned char p) {
     if(nbPawnsPlayed < length * 2 - 1) {
         return 0;
     }

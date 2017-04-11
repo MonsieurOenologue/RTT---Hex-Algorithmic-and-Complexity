@@ -12,10 +12,10 @@ using namespace std;
 
 class HexBoard {
 private :
-    char            length;
-    char            nbPawnsPlayed;
-    char            latestMove;
-    char            path;
+    unsigned char   length;
+    unsigned char   nbPawnsPlayed;
+    unsigned char   latestMove;
+    unsigned char   path;
     string          players;
     vector<string>  board;
     vector<string>  leftToRightSide;
@@ -23,28 +23,30 @@ private :
     vector<string>  highToLowSide;
     vector<string>  lowToHighSide;
 
+    void    initBoard();
+
 public :
-            HexBoard();
-            HexBoard(char newLength);
-            ~HexBoard();
-    void    setLength(char newLength);
-    char    getLength();
-    char    getLatestMove();
-    void    setNbPawnsPlayed(char newNbPawnsPlayed);
-    char    getNbPawnsPlayed();
-    void    setPlayers(string playerL, string playerR);
-    string  getPlayers();
-    string  getPlayerL();
-    string  getPlayerR();
-    FILE*   getRules();
-    bool    swapRule();
-    bool    continueGame();
-    void    displayBoard();
-    bool    setPosition(char x, char y, char v);
-    bool    pawnConnected(char x, char y);
-    bool    victoryByLinksMemory(char p);
-    bool    victoryByRecursion(char x, char y);
-    char    victoryByRecursion(char x, char y, char p);
+                    HexBoard();
+                    HexBoard(unsigned char newLength);
+                    ~HexBoard();
+    void            setLength(unsigned char newLength);
+    unsigned char   getLength();
+    unsigned char   getLatestMove();
+    void            setNbPawnsPlayed(unsigned char newNbPawnsPlayed);
+    unsigned char   getNbPawnsPlayed();
+    void            setPlayers(string playerL, string playerR);
+    string          getPlayers();
+    string          getPlayerL();
+    string          getPlayerR();
+    FILE*           getRules();
+    bool            swapRule();
+    bool            continueGame();
+    void            displayBoard();
+    bool            setPosition(unsigned char x, unsigned char y, unsigned char v);
+    bool            pawnConnected(unsigned char x, unsigned char y);
+    bool            victoryByLinksMemory(unsigned char p);
+    bool            victoryByRecursion(unsigned char x, unsigned char y);
+    unsigned char   victoryByRecursion(unsigned char x, unsigned char y, unsigned char p);
 
 };
 

@@ -12,17 +12,17 @@ using namespace std;
 
 class Action : public HexBoard {
 private :
-    vector<char>    movesTree;
+    vector<unsigned char>   movesTree;
 
 public :
-                    Action();
-                    Action(char);
-                    ~Action();
-    void            giveUp();
-    vector<char>    getMovesTree();
-    char            pullLatestMove();
-    bool            nextMove(char);
-    bool            undoMove();
+                            Action();
+                            Action(unsigned char);
+                            ~Action();
+    void                    giveUp();
+    vector<unsigned char>   getMovesTree();
+    unsigned char           pullLatestMove();
+    bool                    nextMove(unsigned char);
+    bool                    undoMove();
 };
 
 #endif // ACTION_H

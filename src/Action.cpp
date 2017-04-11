@@ -21,18 +21,18 @@ Action::~Action() {
 
 void Action::giveUp() {}
 
-vector<char> Action::getMovesTree() {
+vector<unsigned char> Action::getMovesTree() {
     return movesTree;
 }
 
-char Action::pullLatestMove() {
+unsigned char Action::pullLatestMove() {
     char latestMove = movesTree[movesTree.size()-1];
     movesTree.resize(movesTree.size()-1);
     return latestMove;
 }
 
-bool Action::nextMove(char v) {
-    char x = 0, y = 0;
+bool Action::nextMove(unsigned char v) {
+    unsigned char x = 0, y = 0;
     cin >> y >> x;
     while(y < 65 || x < 97 || y > 64 + getLength() || x > 96 + getLength()) {
         cout << "Coup impossible, veuillez recommencer : ";

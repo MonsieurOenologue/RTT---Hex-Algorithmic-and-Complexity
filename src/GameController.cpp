@@ -40,10 +40,10 @@ mutex playing;
 bool player1, turnPlayed, playConsole, keepGoing, color;
 string playerR, playerL;
 
-char factor = 1, length = 11;
+unsigned char factor = 1, length = 11;
 float offsetX = 0, offsetY = 0, *colors;
 
-float hex_corner_angle(char i) {
+float hex_corner_angle(unsigned char i) {
     short angle_deg = 60 * i + 30;
     return M_PI / 180 * angle_deg;
 }
@@ -65,7 +65,7 @@ void pixel_to_hex(double &x, double &y) {
 void glDrawHexagon(float width, float height) {
     float angle;
     (color) ? glBegin(GL_POLYGON) : glBegin(GL_LINE_LOOP);
-    for(char i = 0; i < 6; ++i) {
+    for(unsigned char i = 0; i < 6; ++i) {
         angle = hex_corner_angle(i);
         glVertex2i(hex_cornerX(angle, width), hex_cornerY(angle, height));
     }
@@ -74,7 +74,7 @@ void glDrawHexagon(float width, float height) {
 
 void glDrawFlatI(int maxWidth, int maxHeight) {
     float width = sqrt(3) * length * (length + 1 + length / 2), height = length * (length + 1) * 1.5;
-    char i, j;
+    unsigned char i, j;
     for(factor = 1; width * (factor+1) < maxWidth && height * (factor+1) < maxHeight; ++factor);
     offsetX = length * 1.5 * factor;
     offsetY = sqrt(3) * length * (3 / 2) * factor;
@@ -105,11 +105,11 @@ static void mouse_button_callback(GLFWwindow* window, int key, int action, int m
         //cout << "Position souris : (" << xpos << ", " << ypos << ")" << endl;
         pixel_to_hex(xpos, ypos);
         //cout << "Position plateau : (" << xpos << ", " << ypos << ")" << endl;
-        if(xpos < 0 || xpos > length-1 || ypos < 0 || ypos > length-1) {
+        if(xpos < 0 || xpos >= length || ypos < 0 || ypos >= length) {
             cerr << "Erreur : les coordonnees (" << xpos << "," << ypos << ") sortent du plateau de jeu." << endl;
         } else {
             while(!playing.try_lock()) sleep(0.1);
-            char c = (player1) ? 'x' : 'o';
+            unsigned char c = (player1) ? 'x' : 'o';
 
             if(moves.setPosition(xpos, ypos, c)) {
                 turnPlayed = true;
@@ -129,7 +129,7 @@ void glInit() {
 }
 
 void play() {
-    char x, y, v = 'o', latestMove;
+    unsigned char x, y, v = 'o', latestMove;
     string currentPlayer;
     srand(time(NULL));
 
@@ -163,6 +163,7 @@ void play() {
         }
         if(turnPlayed) {
             latestMove = moves.getLatestMove();
+            cout << "move = " << latestMove+0 << endl;
             x = ceil(latestMove / length);
             y = latestMove % length;
             if(player1) {
@@ -173,7 +174,7 @@ void play() {
                 colors[(x * length + y) * 3 + 1] = 0;
             }
             moves.displayBoard();
-            cout << "Position du pion : " << (char)(y+65) << (char)(x+97) << endl << endl;
+            cout << "Position du pion : " << (unsigned char)(y+65) << (unsigned char)(x+97) << endl << endl;
             player1 = !player1;
         } else {
             v ^= 'x'^'o';
@@ -192,7 +193,6 @@ void play() {
 }
 
 int main() {
-    player1 = true;
     cout << "Bienvenue sur Hexxxor3000!" << endl
          << "Voulez-vous jouer dans la console (c : defaut) ou dans l'interface (i) ?" << endl;
     cin >> playerR;
@@ -203,19 +203,19 @@ int main() {
     cout << "Entrez le nom du joueur 2 : ";
     cin >> playerL;
     moves.setPlayers(playerR, playerL);
-    cout << "Entrez la taille du plateau de jeu : ";
+    cout << "Entrez la taille du plateau de jeu (3 <= t <= 16) : ";
     short nL;
     cin >> nL;
-    if(nL < 3 || nL > 14) {
+    if(nL < 3 || nL > 16) {
         cerr << "Taille '" << nL << "' impossible..." << endl
              << "Nouvelle Taille : 11" << endl;
-        nL = 11;
     } else {
         cout << "Taille : " << nL << endl;
         length = nL;
+        moves.setLength(length);
     }
-    moves.setLength(length);
     moves.displayBoard();
+    player1 = true;
     turnPlayed = false;
     keepGoing = true;
     colors = new float[length * length * 3];
@@ -232,7 +232,7 @@ int main() {
 	}
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-	window = glfwCreateWindow(650, 400, "Hexxxor3000", NULL, NULL);
+	window = glfwCreateWindow(690, 420, "Hexxxor3000", NULL, NULL);
 	if(!window) {
 		cout << "Failed to create window context" << endl;
 		glfwTerminate();

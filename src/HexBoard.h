@@ -29,7 +29,7 @@ public :
                     HexBoard();
                     HexBoard(unsigned char newLength);
                     ~HexBoard();
-    void            setLength(unsigned char newLength);
+    bool            setLength(unsigned char newLength);
     unsigned char   getLength();
     unsigned char   getLatestMove();
     void            setNbPawnsPlayed(unsigned char newNbPawnsPlayed);

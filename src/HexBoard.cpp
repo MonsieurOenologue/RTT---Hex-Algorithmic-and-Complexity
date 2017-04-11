@@ -38,9 +38,11 @@ void HexBoard::initBoard() {
     }
 }
 
-void HexBoard::setLength(unsigned char newLength) {
+bool HexBoard::setLength(unsigned char newLength) {
+    if(newLength < 3 || newLength > 16) return false;
     length = newLength;
     initBoard();
+    return true;
 }
 
 unsigned char HexBoard::getLength() {
@@ -119,7 +121,7 @@ void HexBoard::displayBoard() {
 }
 
 bool HexBoard::setPosition(unsigned char x, unsigned char y, unsigned char v) {
-    if(x < 0 || x >= length || y < 0 || y >= length || (v != ' ' && board[x][y] != ' ')) return false;
+    if(x >= length || y >= length || (v != ' ' && board[x][y] != ' ')) return false;
     board[x][y] = v;
     nbPawnsPlayed++;
     latestMove = x * length + y;

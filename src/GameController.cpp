@@ -204,15 +204,15 @@ int main() {
     cin >> playerL;
     moves.setPlayers(playerR, playerL);
     cout << "Entrez la taille du plateau de jeu (3 <= t <= 16) : ";
-    short nL;
+    unsigned short nL;
     cin >> nL;
-    if(nL < 3 || nL > 16) {
-        cerr << "Taille '" << nL << "' impossible..." << endl
-             << "Nouvelle Taille : 11" << endl;
+    length = nL;
+    if(moves.setLength(length)) {
+        cout << "Taille : " << length+0 << endl;
     } else {
-        cout << "Taille : " << nL << endl;
-        length = nL;
-        moves.setLength(length);
+        length = 11;
+        cerr << "Taille '" << nL << "' impossible..." << endl
+             << "Nouvelle Taille : " << length+0 << endl;
     }
     moves.displayBoard();
     player1 = true;

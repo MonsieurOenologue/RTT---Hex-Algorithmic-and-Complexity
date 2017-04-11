@@ -131,6 +131,7 @@ void glInit() {
 void play() {
     char x, y, v = 'o', latestMove;
     string currentPlayer;
+    srand(time(NULL));
 
     while(moves.continueGame()) {
         turnPlayed = false;
@@ -181,13 +182,9 @@ void play() {
         playing.unlock();
     }
 
-    if(player1) {
-        cout << endl << "Victoire du joueur " << playerL << "." << endl;
-    } else {
-        cout << endl << "Victoire du joueur " << playerR << "." << endl;
-    }
+    cout << endl << "Victoire du joueur " << ((player1) ? "bleu : "+playerR : "rouge : "+playerL) << "." << endl
+         << endl << "A la prochaine sur Hexxxor3000!\nAppuyez sur une touche pour quitter le programme...";
 
-    cout << endl << "A la prochaine sur Hexxxor3000!\nAppuyez sur une touche pour quitter le programme...";
     cin.sync();
     cin.get();
 
@@ -196,7 +193,6 @@ void play() {
 
 int main() {
     player1 = true;
-    srand(time(NULL));
     cout << "Bienvenue sur Hexxxor3000!" << endl
          << "Voulez-vous jouer dans la console (c : defaut) ou dans l'interface (i) ?" << endl;
     cin >> playerR;

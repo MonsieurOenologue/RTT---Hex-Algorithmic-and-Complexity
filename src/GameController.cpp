@@ -100,7 +100,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 static void mouse_button_callback(GLFWwindow* window, int key, int action, int mods) {
     double xpos, ypos;
-    if(!playConsole && !turnPlayed && key == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+    if(keepGoing && !playConsole && !turnPlayed && key == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
         glfwGetCursorPos(window, &xpos, &ypos);
         //cout << "Position souris : (" << xpos << ", " << ypos << ")" << endl;
         pixel_to_hex(xpos, ypos);
@@ -131,6 +131,7 @@ void glInit() {
 void play() {
     char x, y, v = 'o', latestMove;
     string currentPlayer;
+
     while(moves.continueGame()) {
         turnPlayed = false;
         currentPlayer = ((player1) ? playerR : playerL);
@@ -179,6 +180,17 @@ void play() {
         }
         playing.unlock();
     }
+
+    if(player1) {
+        cout << endl << "Victoire du joueur " << playerL << "." << endl;
+    } else {
+        cout << endl << "Victoire du joueur " << playerR << "." << endl;
+    }
+
+    cout << endl << "A la prochaine sur Hexxxor3000!\nAppuyez sur une touche pour quitter le programme...";
+    cin.sync();
+    cin.get();
+
     keepGoing = false;
 }
 
@@ -247,7 +259,7 @@ int main() {
     glfwSetWindowPos(window, (screenWidth - windowWidth) / 2, (screenHeight - windowHeight) / 2);
 	glInit();
 
-	while(!glfwWindowShouldClose(window) && keepGoing) {
+	while(!glfwWindowShouldClose(window)) {
 		// Scale to window size
 		glfwGetWindowSize(window, &windowWidth, &windowHeight);
 		glViewport(0, 0, windowWidth, windowHeight);
@@ -282,7 +294,7 @@ int main() {
 		glfwSwapBuffers(window);
 
 		// Wait for any input, or window movement
-		glfwWaitEventsTimeout(0.25);
+		(keepGoing) ? glfwWaitEventsTimeout(0.25) : glfwWaitEvents();
 	}
 
 	glfwDestroyWindow(window);
@@ -294,16 +306,6 @@ int main() {
         playing.unlock();
 	}
 	console.join();
-
-    if(player1) {
-        cout << endl << "Victoire du joueur " << playerL << "." << endl;
-    } else {
-        cout << endl << "Victoire du joueur " << playerR << "." << endl;
-    }
-
-    cout << endl << "A la prochaine sur Hexxxor3000!\nAppuyez sur une touche pour quitter le programme...";
-    cin.sync();
-    cin.get();
 
     return 0;
 }

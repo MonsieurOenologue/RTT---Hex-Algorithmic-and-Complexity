@@ -31,6 +31,7 @@ public :
                     ~HexBoard();
     bool            setLength(unsigned char newLength);
     unsigned char   getLength();
+    void            setLatestMove(unsigned char previousLatestMove);
     unsigned char   getLatestMove();
     void            setNbPawnsPlayed(unsigned char newNbPawnsPlayed);
     unsigned char   getNbPawnsPlayed();

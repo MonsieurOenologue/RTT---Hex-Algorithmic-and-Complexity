@@ -4,7 +4,7 @@ CC = g++
 # File names
 EXEC = Hexxxor3000.exe
 SOURCES = $(wildcard *.cpp)
-OBJECTS = GameController.o HexBoard.o Action.o glad.o
+OBJECTS = GameController.o HexBoard.o Action.o Bruteforce.o glad.o
 
 # Define particular targets
 .PHONY: cleanall
@@ -61,13 +61,16 @@ all : $(EXEC)
 $(EXEC): $(OBJECTS)
 	$(CC) $(OBJECTS) -o $(EXEC) $(GL_LIBS)
 
-GameController.o: GameController.cpp HexBoard.h Action.h
+GameController.o: GameController.cpp HexBoard.h Action.h Bruteforce.h
 		$(CC) $(CC_FLAGS) -o $@ -c $<
 
 HexBoard.o: HexBoard.cpp HexBoard.h
 		$(CC) $(CC_FLAGS) -o $@ -c $<
 
 Action.o: Action.cpp Action.h
+		$(CC) $(CC_FLAGS) -o $@ -c $<
+
+Bruteforce.o: Bruteforce.cpp Bruteforce.h HexBoard.h Action.h
 		$(CC) $(CC_FLAGS) -o $@ -c $<
 
 glad.o: glad.c

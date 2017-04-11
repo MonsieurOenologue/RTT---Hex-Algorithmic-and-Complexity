@@ -1,4 +1,5 @@
 #include "Action.h"
+#include "Bruteforce.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -36,6 +37,7 @@ using namespace std;
  */
 
 Action moves;
+Bruteforce brutus;
 mutex playing;
 bool player1, turnPlayed, playConsole, keepGoing, color;
 string playerR, playerL;
@@ -144,6 +146,9 @@ void play() {
                 y = rand() % length;
             } while(!moves.setPosition(x, y, v));
             turnPlayed = true;
+        } else if(currentPlayer == "Bruteforce") {
+            brutus.playNextMove(moves);
+            turnPlayed = true;
         } else {
             if(playConsole) {
                 cout << "Entrez la position de votre pion (colonne + ligne) :" << endl;
@@ -163,7 +168,6 @@ void play() {
         }
         if(turnPlayed) {
             latestMove = moves.getLatestMove();
-            cout << "move = " << latestMove+0 << endl;
             x = ceil(latestMove / length);
             y = latestMove % length;
             if(player1) {
@@ -183,7 +187,7 @@ void play() {
         playing.unlock();
     }
 
-    cout << endl << "Victoire du joueur " << ((player1) ? "bleu : "+playerR : "rouge : "+playerL) << "." << endl
+    cout << endl << "Victoire du joueur " << ((player1) ? "bleu : "+playerL : "rouge : "+playerR) << "." << endl
          << endl << "A la prochaine sur Hexxxor3000!\nAppuyez sur une touche pour quitter le programme...";
 
     cin.sync();
@@ -198,12 +202,13 @@ int main() {
     cin >> playerR;
     playConsole = (playerR[0] != 'i');
     cout << "Aide : \"RandAI\" jouera aleatoirement." << endl
+         << "\"Bruteforce\" (J1) ne fera pas vraiment mieux..." << endl
          << "Entrez le nom du joueur 1 : ";
     cin >> playerR;
     cout << "Entrez le nom du joueur 2 : ";
     cin >> playerL;
     moves.setPlayers(playerR, playerL);
-    cout << "Entrez la taille du plateau de jeu (3 <= t <= 16) : ";
+    cout << "Entrez la taille du plateau de jeu (2 <= t <= 16) : ";
     unsigned short nL;
     cin >> nL;
     length = nL;
@@ -214,6 +219,9 @@ int main() {
         cerr << "Taille '" << nL << "' impossible..." << endl
              << "Nouvelle Taille : " << length+0 << endl;
     }
+    if(playerR == "Bruteforce") brutus.generateMovesTree(length, true, false);
+    //brutus.displayMovesTree();
+    //if(playerL == "Bruteforce") brutus.Generate(length, false, false);
     moves.displayBoard();
     player1 = true;
     turnPlayed = false;

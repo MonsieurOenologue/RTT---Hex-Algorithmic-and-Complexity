@@ -39,7 +39,7 @@ void HexBoard::initBoard() {
 }
 
 bool HexBoard::setLength(unsigned char newLength) {
-    if(newLength < 3 || newLength > 16) return false;
+    if(newLength < 2 || newLength > 16) return false;
     length = newLength;
     initBoard();
     return true;
@@ -47,6 +47,10 @@ bool HexBoard::setLength(unsigned char newLength) {
 
 unsigned char HexBoard::getLength() {
     return length;
+}
+
+void HexBoard::setLatestMove(unsigned char previousLatestMove) {
+    latestMove = previousLatestMove;
 }
 
 unsigned char HexBoard::getLatestMove() {

@@ -21,12 +21,12 @@ Action::~Action() {
 
 void Action::giveUp() {}
 
-vector<unsigned char> Action::getMovesTree() {
+string Action::getMovesTree() {
     return movesTree;
 }
 
 unsigned char Action::pullLatestMove() {
-    char latestMove = movesTree[movesTree.size()-1];
+    unsigned char latestMove = movesTree[movesTree.size()-1];
     movesTree.resize(movesTree.size()-1);
     return latestMove;
 }
@@ -50,6 +50,8 @@ bool Action::nextMove(unsigned char v) {
 
 bool Action::undoMove() {
     if(movesTree.size() < 1) return false;
-    setPosition(movesTree[movesTree.size()-1] / getLength(), movesTree[movesTree.size()-1] % getLength(), ' ');
+    unsigned char latestMove = pullLatestMove(), length = getLength();
+    setPosition(ceil(latestMove / length), latestMove % length, ' ');
+    (movesTree.size() > 0) ? setLatestMove(movesTree[movesTree.size()-1]) : setLatestMove('\0');
     return true;
 }

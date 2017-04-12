@@ -106,9 +106,8 @@ static void mouse_button_callback(GLFWwindow* window, int key, int action, int m
             cerr << "Erreur : les coordonnees (" << xpos << "," << ypos << ") sortent du plateau de jeu." << endl;
         } else {
             while(!playing.try_lock()) sleep(0.1);
-            unsigned char c = (player1) ? 'x' : 'o';
 
-            if(moves.setPosition(xpos, ypos, c)) {
+            if(moves.setPosition(xpos, ypos)) {
                 turnPlayed = true;
             } else {
                 cerr << "Coup impossible, veuillez recommencer..." << endl;
@@ -126,20 +125,19 @@ void glInit() {
 }
 
 void play() {
-    unsigned char x, y, v = 'o', latestMove;
+    unsigned char x, y, latestMove;
     string currentPlayer;
     srand(time(NULL));
 
     while(moves.continueGame()) {
         turnPlayed = false;
         currentPlayer = ((player1) ? playerR : playerL);
-        v ^= 'x'^'o';
         cout << "C'est au tour de " << currentPlayer << "." << endl;
         if(currentPlayer == "RandAI") {
             do {
                 x = rand() % length;
                 y = rand() % length;
-            } while(!moves.setPosition(x, y, v));
+            } while(!moves.setPosition(x, y));
             turnPlayed = true;
         } else if(currentPlayer == "Bruteforce") {
             brutus.playNextMove(moves);
@@ -148,7 +146,7 @@ void play() {
             if(playConsole) {
                 cout << "Entrez la position de votre pion (colonne + ligne) :" << endl;
                 playing.lock();
-                moves.nextMove(v);
+                moves.nextMove();
                 turnPlayed = true;
                 playing.unlock();
             } else {
@@ -175,14 +173,11 @@ void play() {
             moves.displayBoard();
             cout << "Position du pion : " << (unsigned char)(y+65) << (unsigned char)(x+97) << endl << endl;
             player1 = !player1;
-        } else {
-            v ^= 'x'^'o';
-            cout << endl;
-        }
+        } else cout << endl;
         playing.unlock();
     }
 
-    cout << endl << "Victoire du joueur " << ((player1) ? "bleu : "+playerL : "rouge : "+playerR) << "." << endl
+    cout << endl << "Victoire du joueur " << ((player1) ? "2 (bleu) : "+playerL : "1 (rouge) : "+playerR) << "." << endl
          << endl << "A la prochaine sur Hexxxor3000!\nAppuyez sur une touche pour quitter le programme...";
 
     cin.sync();
@@ -198,16 +193,17 @@ int main() {
     playConsole = (playerR[0] != 'i');
     cout << "Aide : \"RandAI\" jouera aleatoirement." << endl
          << "\"Bruteforce\" (J1) ne fera pas vraiment mieux..." << endl
-         << "Entrez le nom du joueur 1 : ";
+         << "J1 'x' joue \"haut/bas\" tandis que J2 'o' joue \"gauche/droite\"." << endl
+         << "Entrez le nom du joueur 1 (rouge) : ";
     cin >> playerR;
-    cout << "Entrez le nom du joueur 2 : ";
+    cout << "Entrez le nom du joueur 2 (bleu) : ";
     cin >> playerL;
     moves.setPlayers(playerR, playerL);
-    cout << "Entrez la taille du plateau de jeu (2 <= t <= 16) : ";
+    cout << "Entrez la taille du plateau de jeu (2 <= t <= 15) : ";
     unsigned short nL;
     cin >> nL;
     length = nL;
-    if(moves.setLength(length)) {
+    if(moves.setLength(length+0)) {
         cout << "Taille : " << length+0 << endl;
     } else {
         length = 11;

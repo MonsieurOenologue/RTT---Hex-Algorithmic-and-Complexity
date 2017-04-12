@@ -33,14 +33,12 @@ Pour Evaluate(0 <= nbPawnsPlayed <= maxi)
     MovesTree.add(nbPawnsPlayed, bestMove)
 FinPour**/
 void Bruteforce::generateMovesTree(unsigned char length, bool player1, bool randomize) {
-    unsigned long long complexity = 2, alreadyFound = 0, i, j;
-    for(i = 3; i <= length * length; ++i) complexity *= i; // factor
-    unsigned char x, y, v = 'x', cost = 0, separator = 255, print;
+    unsigned char x, y, cost = 0, separator = 255, maxPawns = length * length;
+    unsigned long long complexity = 2, i, backtrack = 0;
+    for(i = 3; i <= maxPawns; ++i) complexity *= i; // factor
     ustring toStore;
-    bool solved = false;
-    Action boardTemp;
+    Action boardTemp(length);
 
-    boardTemp.setLength(length);
     random = randomize;
     first = (player1) ? true : false;
     toStore.clear();
@@ -49,26 +47,32 @@ void Bruteforce::generateMovesTree(unsigned char length, bool player1, bool rand
     while(complexity > 0) {
         for(x = 0; x < length; ++x) {
             for(y = 0; y < length; ++y) {
-                if(boardTemp.setPosition(x, y, v)) {
-                    if(boardTemp.victoryByRecursion(x, y, v)) {
-                        toStore = boardTemp.getMovesTree();
-                        toPrint("Solution :", toStore);
-                        for(i = 0; i < movesTree.size(); ++i) {
-                            toPrint("movesTree[i] =", movesTree[i]);
-                            if(movesTree[i].find(toStore) != ustring::npos) {
-                                alreadyFound++;
-                                for(j = 0; j <= alreadyFound; ++j) {
-                                    if(!boardTemp.undoMove()) cerr << "No move to undo." << endl;
-                                    v ^= 'x'^'o';
-                                }
-                                break;
-                            }
+                if(boardTemp.setPosition(x, y)) {
+                    toStore = boardTemp.getMovesTree();
+                    toPrint("Current movesTree :", toStore);
+                    cout << "movesTree size = " << movesTree.size() << endl;
+                    for(i = 0; i < movesTree.size(); ++i) {
+                        toPrint("movesTree[i] :", movesTree[i]);
+                        if(toStore.compare(movesTree[i].substr(0, toStore.size())) == 0) {
+                            cout << "Already founded!" << endl;
+                            cin.sync(); cin.get();
+                            backtrack++;
+                            break;
                         }
-                        if(alreadyFound != 0) continue;
-                        cin.sync();
-                        cin.get();
-                        solved = true;
-                        alreadyFound = 0;
+                    }
+                    if(backtrack != 0 && i != movesTree.size()) {
+                        for(i = 0; i < backtrack; ++i)
+                            if(!boardTemp.undoMove()) cerr << "No move to undo.#0" << endl;
+                            else cout << "UndoMove" << endl;
+                        continue;
+                    }
+                    cout << "Keep going...";
+                    cin.sync(); cin.get();
+                    if(boardTemp.getNbPawnsPlayed() == maxPawns) {
+                    //if(boardTemp.victoryByRecursion(x, y)) {
+                        toPrint("Solution :", toStore);
+                        complexity--;
+                        backtrack = 0;
                         /// player win <==> AI lose
                         /*if((v == 'x') ^ first) {
                             toStore += separator + cost;
@@ -76,15 +80,17 @@ void Bruteforce::generateMovesTree(unsigned char length, bool player1, bool rand
                             toStore += separator + (cost + 1);
                         }*/
                         movesTree.push_back(toStore);
-                        if(!boardTemp.undoMove()) cerr << "No move to undo." << endl;
+                        if(!boardTemp.undoMove()) cerr << "No move to undo.#1" << endl;
+                        /*else {
+                            if(y == 0) {
+                                y = length - 1;
+                                x = (x == 0) ? length - 1 : x - 1;
+                            } else y--;
+                            cout << "x = " << x+0 << ", y = " << y+0 << endl;
+                        }*/
                     }
-                    v ^= 'x'^'o';
                 }
             }
-        }
-        if(solved) {
-            complexity--;
-            solved = false;
         }
     }
 }
@@ -97,21 +103,21 @@ bool Bruteforce::getFirst() {
 
 bool Bruteforce::playNextMove(Action &currentBoardState) {
     unsigned long long i;
-    unsigned char t = 0, p = 255, mini = 255, tmp, length = currentBoardState.getLength(), v = 'x';
+    unsigned char t = 0, p = 255, /*mini = 255,*/ tmp, length = currentBoardState.getLength();
     ustring locate;
     for(i = 0; i < movesTree.size(); ++i) {
         locate = currentBoardState.getMovesTree();
         if(movesTree[i].find(locate) != ustring::npos) {
-            //t = movesTree[i].back();
-            tmp = movesTree[i][movesTree[i].size()-2];
+            //t = movesTree[i][movesTree[i].size() - 1];
+            tmp = movesTree[i][movesTree[i].size() - 1];
             //if(mini > t) {
                 //mini = t;
-                //p = tmp;
+                p = tmp;
                 if(t == 0) break;
             //}
         }
     }
-    return (currentBoardState.setPosition(ceil(p / length), p % length, v)) ? true : false;
+    return (currentBoardState.setPosition(ceil(p / length), p % length)) ? true : false;
 }
 
 void Bruteforce::displayMovesTree() {

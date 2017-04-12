@@ -34,6 +34,7 @@ public :
     unsigned char       pullLatestMove();
     void                setNbPawnsPlayed(unsigned char newNbPawnsPlayed);
     unsigned char       getNbPawnsPlayed();
+    unsigned char       getPlayerPawn();
     void                setPlayers(string playerL, string playerR);
     string              getPlayers();
     string              getPlayerL();
@@ -43,7 +44,7 @@ public :
     bool                swapRule();
     bool                continueGame();
     void                displayBoard();
-    bool                setPosition(unsigned char x, unsigned char y, unsigned char v);
+    bool                setPosition(unsigned char x, unsigned char y);
     bool                resetPosition(unsigned char x, unsigned char y);
     bool                pawnConnected(unsigned char x, unsigned char y);
     bool                victoryByLinksMemory(unsigned char p);

@@ -8,10 +8,10 @@ private :
 
 public :
                     Action();
-                    Action(unsigned char);
+                    Action(unsigned char newLength);
                     ~Action();
     void            giveUp();
-    bool            nextMove(unsigned char);
+    bool            nextMove();
     bool            undoMove();
 };
 

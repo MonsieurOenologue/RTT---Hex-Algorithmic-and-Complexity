@@ -4,51 +4,51 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <stdio.h>
 #include <math.h>
-#include <time.h>
 
 using namespace std;
 
+namespace std {
+    typedef basic_string<unsigned char> ustring;
+}
+
 class HexBoard {
 private :
-    unsigned char   length;
-    unsigned char   nbPawnsPlayed;
-    unsigned char   latestMove;
-    unsigned char   path;
-    string          players;
-    vector<string>  board;
-    vector<string>  leftToRightSide;
-    vector<string>  rightToLeftSide;
-    vector<string>  highToLowSide;
-    vector<string>  lowToHighSide;
+    unsigned char       length;
+    unsigned char       nbPawnsPlayed;
+    unsigned char       path;
+    string              players;
+    ustring             movesTree;
+    vector<ustring>     board;
 
-    void    initBoard();
+    void                initBoard();
 
 public :
-                    HexBoard();
-                    HexBoard(unsigned char newLength);
-                    ~HexBoard();
-    bool            setLength(unsigned char newLength);
-    unsigned char   getLength();
-    void            setLatestMove(unsigned char previousLatestMove);
-    unsigned char   getLatestMove();
-    void            setNbPawnsPlayed(unsigned char newNbPawnsPlayed);
-    unsigned char   getNbPawnsPlayed();
-    void            setPlayers(string playerL, string playerR);
-    string          getPlayers();
-    string          getPlayerL();
-    string          getPlayerR();
-    FILE*           getRules();
-    bool            swapRule();
-    bool            continueGame();
-    void            displayBoard();
-    bool            setPosition(unsigned char x, unsigned char y, unsigned char v);
-    bool            pawnConnected(unsigned char x, unsigned char y);
-    bool            victoryByLinksMemory(unsigned char p);
-    bool            victoryByRecursion(unsigned char x, unsigned char y);
-    unsigned char   victoryByRecursion(unsigned char x, unsigned char y, unsigned char p);
-
+                        HexBoard();
+                        HexBoard(unsigned char newLength);
+                        ~HexBoard();
+    bool                setLength(unsigned char newLength);
+    unsigned char       getLength();
+    void                pushLatestMove(unsigned char newMove);
+    unsigned char       getLatestMove();
+    unsigned char       pullLatestMove();
+    void                setNbPawnsPlayed(unsigned char newNbPawnsPlayed);
+    unsigned char       getNbPawnsPlayed();
+    void                setPlayers(string playerL, string playerR);
+    string              getPlayers();
+    string              getPlayerL();
+    string              getPlayerR();
+    ustring             getMovesTree();
+    FILE*               getRules();
+    bool                swapRule();
+    bool                continueGame();
+    void                displayBoard();
+    bool                setPosition(unsigned char x, unsigned char y, unsigned char v);
+    bool                resetPosition(unsigned char x, unsigned char y);
+    bool                pawnConnected(unsigned char x, unsigned char y);
+    bool                victoryByLinksMemory(unsigned char p);
+    bool                victoryByRecursion(unsigned char x, unsigned char y);
+    unsigned char       victoryByRecursion(unsigned char x, unsigned char y, unsigned char p);
 };
 
 #endif // HEXBOARD_H

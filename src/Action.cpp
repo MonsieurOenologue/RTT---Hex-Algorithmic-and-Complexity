@@ -11,25 +11,11 @@
  *  @section DESCRIPTION
  *
  */
-Action::Action() {
-    movesTree.clear();
-}
+Action::Action() {}
 
-Action::~Action() {
-    movesTree.clear();
-}
+Action::~Action() {}
 
 void Action::giveUp() {}
-
-string Action::getMovesTree() {
-    return movesTree;
-}
-
-unsigned char Action::pullLatestMove() {
-    unsigned char latestMove = movesTree[movesTree.size()-1];
-    movesTree.resize(movesTree.size()-1);
-    return latestMove;
-}
 
 bool Action::nextMove(unsigned char v) {
     unsigned char x = 0, y = 0;
@@ -44,14 +30,12 @@ bool Action::nextMove(unsigned char v) {
     if(!newPos) {
         cout << "Coup impossible, veuillez recommencer : ";
         return nextMove(v);
-    } else movesTree.push_back(x * getLength() + y);
+    }
     return newPos;
 }
 
 bool Action::undoMove() {
-    if(movesTree.size() < 1) return false;
+    if(getNbPawnsPlayed() < 1) return false;
     unsigned char latestMove = pullLatestMove(), length = getLength();
-    setPosition(ceil(latestMove / length), latestMove % length, ' ');
-    (movesTree.size() > 0) ? setLatestMove(movesTree[movesTree.size()-1]) : setLatestMove('\0');
-    return true;
+    return resetPosition(ceil(latestMove / length), latestMove % length);
 }

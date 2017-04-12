@@ -10,44 +10,16 @@
  *  @section DESCRIPTION
  *
  */
-/*bool Bruteforce::Bruteforce() {
-    vector<string> TMP = HexBoard.board;
-    if(player == playerL) {
-        for(char i = 0; i < HexBoard.nbPawnsPlayed; i++) {
-            for(char j = 0; j < HexBoard.nbPawnsPlayed - i; j++){
-                for(char x = 0; x < HexBoard.length; x++) {
-                    for(char y = 0; y < HexBoard.length; y++) {
-                        if(TMP[x][y] == ' ') {
-                            if(!HexBoard.victoryByRecursion(x,y)) {
-                            TMP[x][y] = x;
-                            }
-                        else setPosition(x,y,'x');
-                        }
 
-                    }
-                }
-            }
-        }
-    }
-    else {for(char i = 0; i < HexBoard.nbPawnsPlayed; i++) {
-            for(char j = 0; j < HexBoard.nbPawnsPlayed - i; j++){
-                for(char x = 0; x < HexBoard.length; x++) {
-                    for(char y = 0; y < HexBoard.length; y++) {
-                        if(TMP[x][y] == ' ') {
-                            if(!HexBoard.victoryByRecursion(x,y)) {
-                            TMP[x][y] = x;
-                            }
-                        else setPosition(x,y,'o');
-                        }
+Bruteforce::Bruteforce() {}
 
-                    }
-                }
-            }
-        }
+void toPrint(const char* message, ustring datas) {
+    cout << message;
+    for(unsigned int i = 0; i < datas.size(); ++i) {
+        cout << " " << (datas[i]+0);
     }
-
-    }
-}*/
+    cout << endl;
+}
 
 /**maxi = length * length
 Pour Evaluate(0 <= nbPawnsPlayed <= maxi)
@@ -60,102 +32,59 @@ Pour Evaluate(0 <= nbPawnsPlayed <= maxi)
             undoMove j
     MovesTree.add(nbPawnsPlayed, bestMove)
 FinPour**/
-/*Bruteforce::Bruteforce(unsigned char length, bool player1, bool randomize) {
-    unsigned short maxPawns = length * length, i;
-    unsigned char nbPawnsPlayed, bestMove, x, y, v;
-    Action boardTemp;
-
-    boardTemp.setLength(length);
-    random = randomize;
-    first = (player1) ? true : false;
-    movesTree.clear();
-    movesTree.resize(maxPawns);
-
-    // set leaves of the movesTree
-    for(nbPawnsPlayed = 0; nbPawnsPlayed <= maxPawns; ++nbPawnsPlayed) {
-        // set player
-        v = (player1 && first) 'x' : 'o';
-        for(i = nbPawnsPlayed, bestMove = 255, x = 0, y = 0; i <= maxPawns; ++i) {
-            while(!boardTemp.setPosition(x, y, v)) {
-                if(y == length) {
-                    x++;
-                    y = 0;
-                } else {
-                    y++;
-                }
-            }
-            // if player won <==> AI lose
-            if(boardTemp.victoryByRecursion(x, y, v) && ((v == 'x' && !first) || (v == 'o' && first))) {
-                index = movesTree[x * length + y].find(nbPawnsPlayed+':');
-                if(index != string::npos) {
-
-                }
-                // add value
-                movesTree[nbPawnsPlayed].push_back(1);
-                // add move to minimize
-                movesTree[nbPawnsPlayed].push_back(x * length + y);
-            }
-            // switch player
-            v ^= 'x'^'o';
-            boardTemp.undoMove();
-        }
-    }
-    // set minimized moves of the movesTree
-    for(nbPawnsPlayed = maxPawns - 1; nbPawnsPlayed >= 0; --nbPawnsPlayed) {
-        for(i = 0; i < movesTree[nbPawnsPlayed].size(); ++i) {
-
-        }
-    }
-}*/
-Bruteforce::Bruteforce() {}
-
 void Bruteforce::generateMovesTree(unsigned char length, bool player1, bool randomize) {
-    unsigned long long complexity = 2, i, cpt, cpt2;
-    unsigned short maxPawns = length * length;
-    for(i = 3; i <= maxPawns; ++i) complexity *= i; // factor
-    unsigned char x, y, v = 'x', t, m = 255;
-    bool test;
+    unsigned long long complexity = 2, alreadyFound = 0, i, j;
+    for(i = 3; i <= length * length; ++i) complexity *= i; // factor
+    unsigned char x, y, v = 'x', cost = 0, separator = 255, print;
+    ustring toStore;
+    bool solved = false;
     Action boardTemp;
 
     boardTemp.setLength(length);
     random = randomize;
     first = (player1) ? true : false;
-    //v = (player1 && first) ? 'x' : 'o';
+    toStore.clear();
     movesTree.clear();
-    movesTree.resize(complexity);
 
-    for(x = 0, y = 0, cpt = 0, test = true, t = 0; movesTree.size() < complexity; ++y) {
-        if(y == length) {
-            x = (x + 1 == length) ? 0 : x + 1;
-            y = 0;
-        }
-        if(boardTemp.setPosition(x, y, v)) {
-            if(boardTemp.victoryByRecursion(x, y, v)) {
-                // player win <==> AI lose
-                t = ((v == 'x' && !first) || (v == 'o' && first)) ? 1 : 0;
-                for(i = 0; i < movesTree.size(); ++i) {
-                    // already found
-                    if(movesTree[i].find(boardTemp.getMovesTree()) != string::npos) {
-                        for(cpt2 = 0; cpt2 < cpt; ++cpt2) {
-                            // switch player / AI
-                            v ^= 'x'^'o';
-                            boardTemp.undoMove();
+    while(complexity > 0) {
+        for(x = 0; x < length; ++x) {
+            for(y = 0; y < length; ++y) {
+                if(boardTemp.setPosition(x, y, v)) {
+                    if(boardTemp.victoryByRecursion(x, y, v)) {
+                        toStore = boardTemp.getMovesTree();
+                        toPrint("Solution :", toStore);
+                        for(i = 0; i < movesTree.size(); ++i) {
+                            toPrint("movesTree[i] =", movesTree[i]);
+                            if(movesTree[i].find(toStore) != ustring::npos) {
+                                alreadyFound++;
+                                for(j = 0; j <= alreadyFound; ++j) {
+                                    if(!boardTemp.undoMove()) cerr << "No move to undo." << endl;
+                                    v ^= 'x'^'o';
+                                }
+                                break;
+                            }
                         }
-                        cpt++;
-                        test = false;
-                        break;
+                        if(alreadyFound != 0) continue;
+                        cin.sync();
+                        cin.get();
+                        solved = true;
+                        alreadyFound = 0;
+                        /// player win <==> AI lose
+                        /*if((v == 'x') ^ first) {
+                            toStore += separator + cost;
+                        } else {
+                            toStore += separator + (cost + 1);
+                        }*/
+                        movesTree.push_back(toStore);
+                        if(!boardTemp.undoMove()) cerr << "No move to undo." << endl;
                     }
+                    v ^= 'x'^'o';
                 }
             }
-            if(test) {
-                movesTree.push_back(boardTemp.getMovesTree());
-                movesTree.back().push_back(m);
-                movesTree.back().push_back(t);
-                cpt = 0;
-            } else test = true;
-            // switch player / AI
-            v ^= 'x'^'o';
-            boardTemp.undoMove();
+        }
+        if(solved) {
+            complexity--;
+            solved = false;
         }
     }
 }
@@ -169,17 +98,17 @@ bool Bruteforce::getFirst() {
 bool Bruteforce::playNextMove(Action &currentBoardState) {
     unsigned long long i;
     unsigned char t = 0, p = 255, mini = 255, tmp, length = currentBoardState.getLength(), v = 'x';
-    string locate;
+    ustring locate;
     for(i = 0; i < movesTree.size(); ++i) {
         locate = currentBoardState.getMovesTree();
-        if(movesTree[i].find(locate) != string::npos) {
-            t = movesTree[i].back();
-            tmp = movesTree[i][movesTree[i].size()-3];
-            if(mini > t) {
-                mini = t;
-                p = tmp;
+        if(movesTree[i].find(locate) != ustring::npos) {
+            //t = movesTree[i].back();
+            tmp = movesTree[i][movesTree[i].size()-2];
+            //if(mini > t) {
+                //mini = t;
+                //p = tmp;
                 if(t == 0) break;
-            }
+            //}
         }
     }
     return (currentBoardState.setPosition(ceil(p / length), p % length, v)) ? true : false;

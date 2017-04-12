@@ -1,21 +1,13 @@
 #ifndef BRUTEFORCE_H
 #define BRUTEFORCE_H
 
-#include <iostream>
-#include <string>
-#include <vector>
-#include <stdio.h>
-#include <algorithm>
 #include "Action.h"
-#include "HexBoard.h"
 #include "AITools.h"
 #include "AIManager.h"
 
-using namespace std;
-
 class Bruteforce {
 private :
-    vector<string>  movesTree;
+    vector<ustring> movesTree;
     bool            random;
     bool            first;
 

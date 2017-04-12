@@ -1,4 +1,3 @@
-#include "Action.h"
 #include "Bruteforce.h"
 
 #include <glad/glad.h>
@@ -13,14 +12,10 @@
 #define sleep(x) Sleep(1000 * x)
 #endif
 
-#include <math.h>
 #include <thread>
 #include <mutex>
 
-
-
 #define M_PI 3.14159265358979323846
-
 
 using namespace std;
 

@@ -12,6 +12,8 @@
 #define sleep(x) Sleep(1000 * x)
 #endif
 
+#include <cstdlib>
+#include <time.h>
 #include <thread>
 #include <mutex>
 
@@ -32,7 +34,7 @@ using namespace std;
  */
 
 Action moves;
-Bruteforce brutus;
+Bruteforce bf1, bf2;
 mutex playing;
 bool player1, turnPlayed, playConsole, keepGoing, color;
 string playerR, playerL;
@@ -140,8 +142,9 @@ void play() {
             } while(!moves.setPosition(x, y));
             turnPlayed = true;
         } else if(currentPlayer == "Bruteforce") {
-            brutus.playNextMove(moves);
-            turnPlayed = true;
+            if(player1 && bf1.playNextMove(moves)) turnPlayed = true;
+            else if(!player1 && bf2.playNextMove(moves)) turnPlayed = true;
+            else cerr << "Bruteforce ne peux pas jouer sur ce plateau..." << endl;
         } else {
             if(playConsole) {
                 cout << "Entrez la position de votre pion (colonne + ligne) :" << endl;
@@ -192,7 +195,7 @@ int main() {
     cin >> playerR;
     playConsole = (playerR[0] != 'i');
     cout << "Aide : \"RandAI\" jouera aleatoirement." << endl
-         << "\"Bruteforce\" (J1) ne fera pas vraiment mieux..." << endl
+         << "\"Bruteforce\" (J1) peux jouer en plateau de taille max 2." << endl
          << "J1 'x' joue \"haut/bas\" tandis que J2 'o' joue \"gauche/droite\"." << endl
          << "Entrez le nom du joueur 1 (rouge) : ";
     cin >> playerR;
@@ -210,9 +213,14 @@ int main() {
         cerr << "Taille '" << nL << "' impossible..." << endl
              << "Nouvelle Taille : " << length+0 << endl;
     }
-    if(playerR == "Bruteforce") brutus.generateMovesTree(length, true, false);
-    //brutus.displayMovesTree();
-    //if(playerL == "Bruteforce") brutus.Generate(length, false, false);
+    if(playerR == "Bruteforce") {
+        bf1.generateRecursiveMovesTree(length, true, false);
+        bf1.displayMovesTree();
+    }
+    /*if(playerL == "Bruteforce") {
+        bf2.generateRecursiveMovesTree(length, true, false);
+        bf2.displayMovesTree();
+    }*/
     moves.displayBoard();
     player1 = true;
     turnPlayed = false;

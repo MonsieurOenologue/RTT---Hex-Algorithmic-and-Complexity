@@ -16,6 +16,7 @@ class HexBoard {
 private :
     unsigned char       length;
     unsigned char       nbPawnsPlayed;
+    unsigned char       maxNbPawns;
     unsigned char       path;
     string              players;
     ustring             movesTree;
@@ -34,6 +35,7 @@ public :
     unsigned char       pullLatestMove();
     void                setNbPawnsPlayed(unsigned char newNbPawnsPlayed);
     unsigned char       getNbPawnsPlayed();
+    unsigned char       getMaxNbPawns();
     unsigned char       getPlayerPawn();
     void                setPlayers(string playerL, string playerR);
     string              getPlayers();
@@ -44,8 +46,9 @@ public :
     bool                swapRule();
     bool                continueGame();
     void                displayBoard();
+    bool                setPosition(unsigned char pos);
     bool                setPosition(unsigned char x, unsigned char y);
-    bool                resetPosition(unsigned char x, unsigned char y);
+    bool                resetLatestPosition();
     bool                pawnConnected(unsigned char x, unsigned char y);
     bool                victoryByLinksMemory(unsigned char p);
     bool                victoryByRecursion(unsigned char x, unsigned char y);

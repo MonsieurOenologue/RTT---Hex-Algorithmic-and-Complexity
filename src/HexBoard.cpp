@@ -14,6 +14,7 @@
 HexBoard::HexBoard() {
     length = 11;
     nbPawnsPlayed = 0;
+    maxNbPawns = length * length;
     path = 0;
     movesTree.clear();
     initBoard();
@@ -22,6 +23,7 @@ HexBoard::HexBoard() {
 HexBoard::HexBoard(unsigned char newLength) {
     length = newLength;
     nbPawnsPlayed = 0;
+    maxNbPawns = length * length;
     path = 0;
     movesTree.clear();
     initBoard();
@@ -42,6 +44,7 @@ void HexBoard::initBoard() {
 bool HexBoard::setLength(unsigned char newLength) {
     if(newLength < 2 || newLength > 15) return false;
     length = newLength;
+    maxNbPawns = length * length;
     initBoard();
     return true;
 }
@@ -73,6 +76,10 @@ void HexBoard::setNbPawnsPlayed(unsigned char newNbPawnsPlayed) {
 
 unsigned char HexBoard::getNbPawnsPlayed() {
     return nbPawnsPlayed;
+}
+
+unsigned char HexBoard::getMaxNbPawns() {
+    return maxNbPawns;
 }
 
 unsigned char HexBoard::getPlayerPawn() {
@@ -108,11 +115,10 @@ bool HexBoard::swapRule() {
 }
 
 bool HexBoard::continueGame() {
-    path = 0;
     unsigned char latestMove = getLatestMove();
     if(latestMove == 255) return true;
-    unsigned char x = ceil(latestMove / length), y = latestMove % length;
-    return !victoryByRecursion(x,y);
+    path = 0;
+    return !victoryByRecursion(ceil(latestMove / length), latestMove % length);
 }
 
 void HexBoard::displayBoard() {
@@ -144,17 +150,25 @@ void HexBoard::displayBoard() {
     cout << endl << endl;
 }
 
+bool HexBoard::setPosition(unsigned char pos) {
+    unsigned char x = ceil(pos / length), y = pos % length;
+    if(pos >= maxNbPawns || board[x][y] != ' ') return false;
+    board[x][y] = getPlayerPawn();
+    pushLatestMove(pos);
+    return true;
+}
+
 bool HexBoard::setPosition(unsigned char x, unsigned char y) {
-    unsigned char v = getPlayerPawn();
-    if(x >= length || y >= length || v == ' ' || board[x][y] != ' ') return false;
-    board[x][y] = v;
+    if(x >= length || y >= length || board[x][y] != ' ') return false;
+    board[x][y] = getPlayerPawn();
     pushLatestMove(x * length + y);
     return true;
 }
 
-bool HexBoard::resetPosition(unsigned char x, unsigned char y) {
-    if(pullLatestMove() == 255 || x >= length || y >= length || board[x][y] == ' ') return false;
-    board[x][y] = ' ';
+bool HexBoard::resetLatestPosition() {
+    unsigned char latestMove = pullLatestMove();
+    if(latestMove == 255) return false;
+    board[ceil(latestMove / length)][latestMove % length] = ' ';
     return true;
 }
 

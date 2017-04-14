@@ -15,7 +15,7 @@ Bruteforce::Bruteforce() {}
 
 void toPrint(const char* message, ustring datas) {
     cout << message;
-    for(unsigned int i = 0; i < datas.size(); ++i) {
+    for(unsigned char i = 0; i < datas.size(); ++i) {
         cout << " " << (datas[i]+0);
     }
     cout << endl;
@@ -33,7 +33,7 @@ Pour Evaluate(0 <= nbPawnsPlayed <= maxi)
     MovesTree.add(nbPawnsPlayed, bestMove)
 FinPour**/
 void Bruteforce::generateMovesTree(unsigned char length, bool player1, bool randomize) {
-    unsigned char x, y, cost = 0, separator = 255, maxPawns = length * length;
+    unsigned char x, y, maxPawns = length * length;
     unsigned long long complexity = 2, i, backtrack = 0;
     for(i = 3; i <= maxPawns; ++i) complexity *= i; // factor
     ustring toStore;
@@ -95,6 +95,72 @@ void Bruteforce::generateMovesTree(unsigned char length, bool player1, bool rand
     }
 }
 
+void Bruteforce::generateRecursiveMovesTree(unsigned char length, bool player1, bool randomize) {
+    unsigned char i, j, maxPawns = length * length;
+    Action boardTemp(length);
+    ustring pos;
+    pos.clear();
+    bool proc;
+
+    for(i = 0; i < maxPawns; ++i) pos += i;
+
+    first = (player1) ? true : false;
+    random = randomize;
+    movesTree.clear();
+    badMoves.clear();
+
+    generateRecursiveMovesTree(boardTemp, pos);
+
+    for(i = 0, j = 0; j < badMoves.size(); ++j) {
+        for(proc = false; i < movesTree.size(); ++i) {
+            //cerr << "processing..." << endl;
+            if(badMoves[j].compare(movesTree[i].substr(0, badMoves[j].size())) == 0) {
+                proc = true;
+                //toPrint("badMove :", movesTree[i]);
+                movesTree.erase(movesTree.begin() + i); /// Getting ride of bad moves sequence
+                i--;
+            } else if(proc) break;
+        }
+        //cerr << "Done#" << j+0 << endl;
+        //cerr << "Remains#" << movesTree.size() << endl;
+        //cin.sync(); cin.get();
+    }
+}
+
+bool Bruteforce::generateRecursiveMovesTree(Action boardTemp, ustring pos) {
+    unsigned char i, _size = pos.size(), alreadyLost = 0;
+    bool AIplaying = first ^ (boardTemp.getPlayerPawn() == 'o');
+    ustring tmp;
+
+    for(i = 0; i < _size; ++i) {
+        if(boardTemp.setPosition(pos[i])) {
+            if(boardTemp.continueGame()) {
+                tmp = pos;
+                tmp.erase(tmp.find_first_of(tmp[i]), 1); /// Getting ride of played move
+                if(generateRecursiveMovesTree(boardTemp, tmp)) { /// AI lost on next move
+                    alreadyLost++;
+                }
+            } else if(AIplaying) { /// AI win
+                movesTree.push_back(boardTemp.getMovesTree());
+            } else return true; /// AI lose
+            if(!boardTemp.undoMove()) cerr << "Error : No move to undo." << endl;
+        } else {
+            cerr << "Error : Unexpected position " << pos[i]+0;
+            toPrint(" on moves", boardTemp.getMovesTree());
+        }
+    }
+
+    if(alreadyLost == _size) {
+        tmp = boardTemp.getMovesTree();
+        tmp.pop_back();
+        //toPrint("badSequence :", tmp);
+        badMoves.push_back(tmp);
+        return true;
+    }
+
+    return false;
+}
+
 Bruteforce::~Bruteforce() {}
 
 bool Bruteforce::getFirst() {
@@ -102,30 +168,34 @@ bool Bruteforce::getFirst() {
 }
 
 bool Bruteforce::playNextMove(Action &currentBoardState) {
-    unsigned long long i;
-    unsigned char t = 0, p = 255, /*mini = 255,*/ tmp, length = currentBoardState.getLength();
-    ustring locate;
-    for(i = 0; i < movesTree.size(); ++i) {
-        locate = currentBoardState.getMovesTree();
-        if(movesTree[i].find(locate) != ustring::npos) {
-            //t = movesTree[i][movesTree[i].size() - 1];
-            tmp = movesTree[i][movesTree[i].size() - 1];
-            //if(mini > t) {
-                //mini = t;
-                p = tmp;
-                if(t == 0) break;
-            //}
+    unsigned char nbPawnsPlayed = currentBoardState.getNbPawnsPlayed(), maxNbPawns = currentBoardState.getMaxNbPawns(), pos;
+    unsigned long long i, _size = movesTree.size();
+
+    if(nbPawnsPlayed == 0)
+        return currentBoardState.setPosition(movesTree[rand() % _size][0]);
+    if(nbPawnsPlayed >= maxNbPawns)
+        return false;
+
+    srand(time(NULL));
+    ustring locate = currentBoardState.getMovesTree();
+
+    for(i = 0; i < _size; ++i) {
+        if(locate.compare(movesTree[i].substr(0, locate.size())) == 0) {
+            pos = movesTree[i][locate.size()];
+            if(currentBoardState.setPosition(pos)) return true;
         }
     }
-    return (currentBoardState.setPosition(ceil(p / length), p % length)) ? true : false;
+    while(!currentBoardState.setPosition(rand() % maxNbPawns));
+    return true;
 }
 
 void Bruteforce::displayMovesTree() {
     unsigned long long i, j;
+    cerr << "movesTree.size() = " << movesTree.size() << endl;
     for(i = 0; i < movesTree.size(); ++i) {
-        for(j = 0; j+2 < movesTree[i].size(); ++j) {
+        for(j = 0; j < movesTree[i].size(); ++j) {
             cout << movesTree[i][j]+0 << " ";
         }
-        cout << "; " << movesTree[i][j+1]+0 << endl;
+        cout << endl;
     }
 }

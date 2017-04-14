@@ -34,7 +34,5 @@ bool Action::nextMove() {
 }
 
 bool Action::undoMove() {
-    unsigned char latestMove = getLatestMove(), length = getLength();
-    if(latestMove == 255) return false;
-    return resetPosition(ceil(latestMove / length), latestMove % length);
+    return resetLatestPosition();
 }

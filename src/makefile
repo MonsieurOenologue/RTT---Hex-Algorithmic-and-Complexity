@@ -73,6 +73,12 @@ Action.o: Action.cpp Action.h
 Bruteforce.o: Bruteforce.cpp Bruteforce.h HexBoard.h Action.h
 		$(CC) $(CC_FLAGS) -o $@ -c $<
 
+AITools.o: AITools.cpp AITools.h
+		$(CC) $(CC_FLAGS) -o $@ -c $<
+
+DataFileStorage.o: DataFileStorage.cpp DataFileStorage.h HexBoard.h Action.h
+		$(CC) $(CC_FLAGS) -o $@ -c $<
+
 glad.o: glad.c
 		$(CC) $(CC_FLAGS) -o $@ -c $<
 

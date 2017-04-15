@@ -109,25 +109,39 @@ void Bruteforce::generateRecursiveMovesTree(unsigned char length, bool player1, 
     movesTree.clear();
     badMoves.clear();
 
-    generateRecursiveMovesTree(boardTemp, pos);
+    if(first) generatePlayer1RecursiveMovesTree(boardTemp, pos);
+    else generatePlayer2RecursiveMovesTree(boardTemp, pos);
+    cerr << "WinningMoves#" << movesTree.size() << endl;
 
-    for(i = 0, j = 0; j < badMoves.size(); ++j) {
-        for(proc = false; i < movesTree.size(); ++i) {
-            //cerr << "processing..." << endl;
-            if(badMoves[j].compare(movesTree[i].substr(0, badMoves[j].size())) == 0) {
-                proc = true;
-                //toPrint("badMove :", movesTree[i]);
-                movesTree.erase(movesTree.begin() + i); /// Getting ride of bad moves sequence
-                i--;
-            } else if(proc) break;
+    if(first)
+        for(i = 0, j = 0; j < badMoves.size(); ++j) {
+            for(proc = false; i < movesTree.size(); ++i) {
+                //cerr << "processing..." << endl;
+                toPrint("movesTree :", movesTree[i]);
+                if(badMoves[j].compare(movesTree[i].substr(0, badMoves[j].size())) == 0) {
+                    proc = true;
+                    toPrint("badMove :", movesTree[i+1]);
+                    cin.sync(); cin.get();
+                    movesTree.erase(movesTree.begin() + i); /// Getting ride of bad moves sequence
+                    i--;
+                } else if(proc) break;
+            }
+            //cerr << "Done#" << j+0 << endl;
+            //cerr << "Remains#" << movesTree.size() << endl;
+            //cin.sync(); cin.get();
         }
-        //cerr << "Done#" << j+0 << endl;
-        //cerr << "Remains#" << movesTree.size() << endl;
-        //cin.sync(); cin.get();
-    }
 }
 
-bool Bruteforce::generateRecursiveMovesTree(Action boardTemp, ustring pos) {
+/*Profondeur : p
+Si une solution est trouvee en p : inutile de parcourir en p+1
+Si aucune branche p+1 ne gagne : on supprime la branche p (ex : p+1 = [0 2])
+Si plusieurs coups n'influent pas sur le resultat : les regrouper (ex : p1 = [1 0 2], p2 = [1 0 3]; p = [1 0 {2,3}])
+Si un groupe n'omet aucun coup : le supprimer (ex : p = [1 0 {2,3}]; p' = [1 0])
+Si un groupe n'omet qu'un seul coup : le transformer en "non" logique (ex : p1 = [1 2 3], p2 = [1 3 2], p' = [1 !0 !0])
+Si plusieurs solutions englobent toutes les possibilites : les fusionner (ex : p1 = [1 0], p2 = [1 !0 !0], p' = [1 !0 !0])
+*/
+
+bool Bruteforce::generatePlayer1RecursiveMovesTree(Action boardTemp, ustring pos) {
     unsigned char i, _size = pos.size(), alreadyLost = 0;
     bool AIplaying = first ^ (boardTemp.getPlayerPawn() == 'o');
     ustring tmp;
@@ -137,12 +151,13 @@ bool Bruteforce::generateRecursiveMovesTree(Action boardTemp, ustring pos) {
             if(boardTemp.continueGame()) {
                 tmp = pos;
                 tmp.erase(tmp.find_first_of(tmp[i]), 1); /// Getting ride of played move
-                if(generateRecursiveMovesTree(boardTemp, tmp)) { /// AI lost on next move
+                if(generatePlayer1RecursiveMovesTree(boardTemp, tmp)) { /// AI lost on next move
                     alreadyLost++;
                 }
             } else if(AIplaying) { /// AI win
                 movesTree.push_back(boardTemp.getMovesTree());
-            } else return true; /// AI lose
+                //if(!random) return false; /// Avoid multiple moves for the same solution
+            } else return true; /// Avoid hoping for missplay(s) (only for player 1)
             if(!boardTemp.undoMove()) cerr << "Error : No move to undo." << endl;
         } else {
             cerr << "Error : Unexpected position " << pos[i]+0;
@@ -153,8 +168,78 @@ bool Bruteforce::generateRecursiveMovesTree(Action boardTemp, ustring pos) {
     if(alreadyLost == _size) {
         tmp = boardTemp.getMovesTree();
         tmp.pop_back();
-        //toPrint("badSequence :", tmp);
-        badMoves.push_back(tmp);
+        if(tmp.empty()) return true;
+        if(badMoves.empty()) {
+            /*toPrint("badMove :", tmp);
+            cin.sync(); cin.get();*/
+            badMoves.push_back(tmp);
+            return true;
+        }
+        if(tmp.size() >= badMoves[badMoves.size()-1].size() && tmp.substr(0, badMoves[badMoves.size()-1].size()).compare(badMoves[badMoves.size()-1]) != 0) {
+            /*toPrint("badMove :", tmp);
+            cin.sync(); cin.get();*/
+            badMoves.push_back(tmp);
+            return true;
+        } else {
+            for(i = 0; tmp.size() < badMoves[badMoves.size()-1].size() && badMoves[badMoves.size()-1].substr(0, tmp.size()).compare(tmp) == 0; ++i) {
+                /*toPrint("depop :", badMoves[badMoves.size()-1]);
+                cin.sync(); cin.get();*/
+                badMoves.pop_back();
+            }
+            if(i == 0 && tmp.size() >= badMoves[badMoves.size()-1].size()) return true;
+            /*toPrint("badMove :", tmp);
+            cin.sync(); cin.get();*/
+            badMoves.push_back(tmp);
+        }
+        return true;
+    }
+
+    return false;
+}
+
+bool Bruteforce::generatePlayer2RecursiveMovesTree(Action boardTemp, ustring pos) {
+    unsigned char i, _size = pos.size(), alreadyLost = 0, soonLost = 0, canWin = 0;
+    bool AIplaying = first ^ (boardTemp.getPlayerPawn() == 'o');
+    ustring tmp;
+
+    for(i = 0; i < _size; ++i) {
+        if(boardTemp.setPosition(pos[i])) {
+            if(boardTemp.continueGame()) {
+                tmp = pos;
+                tmp.erase(tmp.find_first_of(tmp[i]), 1); /// Getting ride of played move
+                if(generatePlayer2RecursiveMovesTree(boardTemp, tmp)) { /// AI lost on next move
+                    toPrint("badMove :", boardTemp.getMovesTree());
+                    soonLost++;
+                } else canWin++;
+            } else if(AIplaying) { /// AI win
+                canWin++;
+                movesTree.push_back(boardTemp.getMovesTree());
+                //if(!random) return false; /// Avoid multiple moves for the same solution
+            } else alreadyLost++; /// AI lose
+            //} else return true; /// Avoid hoping for missplay(s) (doesn't work for player 2)
+            if(!boardTemp.undoMove()) cerr << "Error : No move to undo." << endl;
+        } else {
+            cerr << "Error : Unexpected position " << pos[i]+0;
+            toPrint(" on moves", boardTemp.getMovesTree());
+        }
+    }
+
+    if(first && alreadyLost + soonLost == _size) {
+        tmp = boardTemp.getMovesTree();
+        tmp.pop_back();
+        if(tmp.size() != 0) {
+            toPrint("badSequence :", tmp);
+            badMoves.push_back(tmp);
+        }
+        return true;
+    } else if(!first && (alreadyLost != 0 || canWin == 0)) {
+        cout << "(a" << alreadyLost+0 << ", s" << soonLost+0 << ", c" << canWin+0 << ")" << endl;
+        tmp = boardTemp.getMovesTree();
+        //tmp.pop_back();
+        if(tmp.size() != 0) {
+            toPrint("badSequence#2 :", tmp);
+            badMoves.push_back(tmp);
+        }
         return true;
     }
 
@@ -191,7 +276,7 @@ bool Bruteforce::playNextMove(Action &currentBoardState) {
 
 void Bruteforce::displayMovesTree() {
     unsigned long long i, j;
-    cerr << "movesTree.size() = " << movesTree.size() << endl;
+    cerr << "Il y a " << movesTree.size() << " solutions." << endl;
     for(i = 0; i < movesTree.size(); ++i) {
         for(j = 0; j < movesTree[i].size(); ++j) {
             cout << movesTree[i][j]+0 << " ";

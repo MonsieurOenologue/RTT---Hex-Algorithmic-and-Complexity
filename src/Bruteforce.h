@@ -21,7 +21,8 @@ public :
     bool            playNextMove(Action &currentBoardState);
     void            generateMovesTree(unsigned char length, bool player1, bool randomize);
     void            generateRecursiveMovesTree(unsigned char length, bool player1, bool randomize);
-    bool            generateRecursiveMovesTree(Action boardTemp, ustring pos);
+    bool            generatePlayer1RecursiveMovesTree(Action boardTemp, ustring pos);
+    bool            generatePlayer2RecursiveMovesTree(Action boardTemp, ustring pos);
     void            displayMovesTree();
 };
 

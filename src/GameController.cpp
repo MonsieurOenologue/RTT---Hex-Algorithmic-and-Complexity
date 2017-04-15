@@ -217,10 +217,10 @@ int main() {
         bf1.generateRecursiveMovesTree(length, true, false);
         bf1.displayMovesTree();
     }
-    /*if(playerL == "Bruteforce") {
-        bf2.generateRecursiveMovesTree(length, true, false);
+    if(playerL == "Bruteforce") {
+        bf2.generateRecursiveMovesTree(length, false, false);
         bf2.displayMovesTree();
-    }*/
+    }
     moves.displayBoard();
     player1 = true;
     turnPlayed = false;

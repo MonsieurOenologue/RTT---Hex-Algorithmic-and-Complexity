@@ -221,14 +221,12 @@ bool HexBoard::victoryByLinksMemory(unsigned char p) {
 }
 
 bool HexBoard::victoryByRecursion(unsigned char x, unsigned char y) {
-    if(board[x][y] == ' ') return false;
+    if(board[x][y] == ' ' || nbPawnsPlayed < length * 2 - 1) return false;
+    if(nbPawnsPlayed == maxNbPawns) return true;
     return (victoryByRecursion(x, y, board[x][y]) == 3);
 }
 
 unsigned char HexBoard::victoryByRecursion(unsigned char x, unsigned char y, unsigned char p) {
-    if(nbPawnsPlayed < length * 2 - 1) {
-        return 0;
-    }
     if(path != 3 && path % 3 != 1 && ((x == 0 && p == 'x') || (y == 0 && p == 'o'))) {
        path++;
     }

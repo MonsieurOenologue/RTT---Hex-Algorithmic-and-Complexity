@@ -9,8 +9,8 @@
 
 class Bruteforce {
 private :
-    vector<ustring> movesTree;
-    vector<ustring> badMoves;
+    vector<ustring> player1;
+    vector<ustring> player2;
     bool            random;
     bool            first;
 
@@ -19,11 +19,11 @@ public :
                     ~Bruteforce();
     bool            getFirst();
     bool            playNextMove(Action &currentBoardState);
-    void            generateMovesTree(unsigned char length, bool player1, bool randomize);
-    void            generateRecursiveMovesTree(unsigned char length, bool player1, bool randomize);
-    bool            generatePlayer1RecursiveMovesTree(Action boardTemp, ustring pos);
-    bool            generatePlayer2RecursiveMovesTree(Action boardTemp, ustring pos);
-    void            displayMovesTree();
+    void            generateRecursiveMovesTree(unsigned char length, bool playFirst, bool randomize);
+    void            generateRecursiveMovesTree(Action boardTemp, ustring pos);
+    void            sortPlayer1(unsigned char maxNbPawns);
+    void            displayPlayer1MovesTree();
+    void            displayPlayer2MovesTree();
 };
 
 #endif // BRUTEFORCE_H

@@ -34,7 +34,7 @@ using namespace std;
  */
 
 Action moves;
-Bruteforce bf1, bf2;
+Bruteforce bf;
 mutex playing;
 bool player1, turnPlayed, playConsole, keepGoing, color;
 string playerR, playerL;
@@ -142,8 +142,7 @@ void play() {
             } while(!moves.setPosition(x, y));
             turnPlayed = true;
         } else if(currentPlayer == "Bruteforce") {
-            if(player1 && bf1.playNextMove(moves)) turnPlayed = true;
-            else if(!player1 && bf2.playNextMove(moves)) turnPlayed = true;
+            if(player1 && bf.playNextMove(moves)) turnPlayed = true;
             else cerr << "Bruteforce ne peux pas jouer sur ce plateau..." << endl;
         } else {
             if(playConsole) {
@@ -214,12 +213,12 @@ int main() {
              << "Nouvelle Taille : " << length+0 << endl;
     }
     if(playerR == "Bruteforce") {
-        bf1.generateRecursiveMovesTree(length, true, false);
-        bf1.displayMovesTree();
+        bf.generateRecursiveMovesTree(length, true, false);
+        bf.displayPlayer1MovesTree();
     }
     if(playerL == "Bruteforce") {
-        bf2.generateRecursiveMovesTree(length, false, false);
-        bf2.displayMovesTree();
+        bf.generateRecursiveMovesTree(length, false, false);
+        bf.displayPlayer2MovesTree();
     }
     moves.displayBoard();
     player1 = true;

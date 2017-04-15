@@ -142,8 +142,12 @@ void play() {
             } while(!moves.setPosition(x, y));
             turnPlayed = true;
         } else if(currentPlayer == "Bruteforce") {
-            if(player1 && bf.playNextMove(moves)) turnPlayed = true;
-            else cerr << "Bruteforce ne peux pas jouer sur ce plateau..." << endl;
+            if(bf.playNextMove(moves)) turnPlayed = true;
+            else {
+                cerr << "Bruteforce ne peux pas jouer sur ce plateau..." << endl;
+                cin.sync();
+                cin.get();
+            }
         } else {
             if(playConsole) {
                 cout << "Entrez la position de votre pion (colonne + ligne) :" << endl;
@@ -213,11 +217,11 @@ int main() {
              << "Nouvelle Taille : " << length+0 << endl;
     }
     if(playerR == "Bruteforce") {
-        bf.generateRecursiveMovesTree(length, true, false);
+        bf.generateRecursiveMovesTree(length, false);
         bf.displayPlayer1MovesTree();
     }
     if(playerL == "Bruteforce") {
-        bf.generateRecursiveMovesTree(length, false, false);
+        bf.generateRecursiveMovesTree(length, false);
         bf.displayPlayer2MovesTree();
     }
     moves.displayBoard();

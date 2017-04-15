@@ -14,8 +14,13 @@
 Bruteforce::Bruteforce() {
     player1.clear();
     player2.clear();
+    generated = false;
     random = false;
-    first = true;
+}
+
+Bruteforce::~Bruteforce() {
+    player1.clear();
+    player2.clear();
 }
 
 void toPrint(const char* message, ustring datas) {
@@ -49,50 +54,9 @@ Pour Evaluate(0 <= nbPawnsPlayed <= maxi)
     MovesTree.add(nbPawnsPlayed, bestMove)
 FinPour**/
 
-void Bruteforce::sortPlayer1(unsigned char maxNbPawns) {
-    unsigned char i, j, k, cpt, MinMax, old;
-    ustring pawns;
+void Bruteforce::generateRecursiveMovesTree(unsigned char length, bool randomize) {
+    if(generated) return;
 
-    for(k = 0; k < 1; ++k) {
-        pawns.clear();
-        for(i = 0, cpt = 1, MinMax = 0, old = 255, pawns.push_back(255); i < player1.size(); ++i, ++cpt) {
-            if(old != player1[i][k]) {
-                old = player1[i][k];
-                cpt = 1;
-            }
-            for(j = 0; j < pawns.size(); ++j) {
-                if(pawns[j] != player1[i][k]) {
-                    if(MinMax == cpt) { /// Handle multiple winning moves
-                        pawns.push_back(player1[i][k]);
-                    } else if(k % 2 == 0 && MinMax < cpt) {
-                        pawns.clear();
-                        pawns.push_back(player1[i][k]);
-                        MinMax = cpt;
-                        cpt = 0;
-                    } else if(k % 2 == 1 && MinMax > cpt) {
-                        pawns.clear();
-                        pawns.push_back(player1[i][k]);
-                        MinMax = cpt;
-                        cpt = 0;
-                    }
-                    break;
-                }
-            }
-            if(j == pawns.size()) MinMax++;
-        }
-        for(i = 0; i < player1.size(); ++i) {
-            for(j = 0; j < pawns.size(); ++j) {
-                if(player1[i][k] == pawns[j]) break;
-            }
-            if(j == pawns.size()) {
-                player1.erase(player1.begin() + i);
-                i--;
-            }
-        }
-    }
-}
-
-void Bruteforce::generateRecursiveMovesTree(unsigned char length, bool playFirst, bool randomize) {
     unsigned char i, maxNbPawns = length * length;
     Action boardTemp(length);
     ustring pos;
@@ -100,7 +64,6 @@ void Bruteforce::generateRecursiveMovesTree(unsigned char length, bool playFirst
 
     for(i = 0; i < maxNbPawns; ++i) pos += i;
 
-    first = playFirst;
     random = randomize;
     player1.clear();
     player2.clear();
@@ -111,7 +74,10 @@ void Bruteforce::generateRecursiveMovesTree(unsigned char length, bool playFirst
     cerr << "WinningMovesP2#" << player2.size() << endl;
     toPrint("Moves P2 :", player2);
 
-    sortPlayer1(maxNbPawns);
+    sortPlayer1(1); /// TO DO : determine maxBranchLength from generate function, avoid comparing different moves length
+    //sortPlayer2(1);
+
+    generated = true;
 }
 
 /**Profondeur : p
@@ -151,28 +117,70 @@ void Bruteforce::generateRecursiveMovesTree(Action boardTemp, ustring pos) {
     }
 }
 
-Bruteforce::~Bruteforce() {
-    player1.clear();
-    player2.clear();
+void Bruteforce::sortPlayer1(unsigned char maxBranchLength) {
+    unsigned char i, j, k, cpt, MinMax;
+    ustring old, tmp;
+    vector<ustring> pawns;
+
+    for(k = 1; k <= maxBranchLength; ++k) {
+        old.clear();
+        tmp.clear();
+        pawns.clear();
+        for(i = 0, cpt = 1, MinMax = 0, old.push_back(255), pawns.push_back(old); i < player1.size(); ++i, ++cpt) {
+            tmp = player1[i].substr(0, k);
+            if(old.compare(tmp) != 0) {
+                old = tmp;
+                cpt = 1;
+            }
+            for(j = 0; j < pawns.size(); ++j) {
+                if(pawns[j].compare(tmp) != 0) {
+                    if(MinMax == cpt) { /// Handle multiple winning moves
+                        pawns.push_back(tmp);
+                    } else if(k % 2 == 1 && MinMax < cpt) {
+                        pawns.clear();
+                        pawns.push_back(tmp);
+                        MinMax = cpt;
+                        cpt = 0;
+                    } else if(k % 2 == 0 && MinMax > cpt) {
+                        pawns.clear();
+                        pawns.push_back(tmp);
+                        MinMax = cpt;
+                        cpt = 0;
+                    }
+                    break;
+                }
+            }
+            if(j == pawns.size()) MinMax++;
+        }
+        for(i = 0; i < player1.size(); ++i) {
+            tmp = player1[i].substr(0, k);
+            for(j = 0; j < pawns.size(); ++j) {
+                if(tmp == pawns[j]) break;
+            }
+            if(j == pawns.size()) {
+                player1.erase(player1.begin() + i);
+                i--;
+            }
+        }
+    }
 }
 
-bool Bruteforce::getFirst() {
-    return first;
-}
+void Bruteforce::sortPlayer2(unsigned char maxBranchLength) {}
 
 bool Bruteforce::playNextMove(Action &currentBoardState) {
     unsigned char nbPawnsPlayed = currentBoardState.getNbPawnsPlayed(), maxNbPawns = currentBoardState.getMaxNbPawns(), pos;
-    unsigned long long i, _size = (first) ? player1.size() : player2.size();
+    bool isPlayer1 = (nbPawnsPlayed % 2 == 0);
+    unsigned long long i, _size = (isPlayer1) ? player1.size() : player2.size();
 
     if(nbPawnsPlayed == 0)
-        return currentBoardState.setPosition((first) ? player1[rand() % _size][0] : player2[rand() % _size][0]);
+        return currentBoardState.setPosition(player1[rand() % _size][0]);
     if(nbPawnsPlayed == maxNbPawns)
         return false;
 
     srand(time(NULL));
     ustring locate = currentBoardState.getMovesTree();
 
-    if(first) {
+    if(isPlayer1) {
         for(i = 0; i < _size; ++i) {
             if(locate.compare(player1[i].substr(0, locate.size())) == 0) {
                 pos = player1[i][locate.size()];

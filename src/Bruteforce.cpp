@@ -54,7 +54,7 @@ Pour Evaluate(0 <= nbPawnsPlayed <= maxi)
     MovesTree.add(nbPawnsPlayed, bestMove)
 FinPour**/
 
-void Bruteforce::generateRecursiveMovesTree(unsigned char length, bool randomize) {
+void Bruteforce::generateMovesTree(unsigned char length, bool randomize) {
     if(generated) return;
 
     unsigned char i, maxNbPawns = length * length;
@@ -68,14 +68,13 @@ void Bruteforce::generateRecursiveMovesTree(unsigned char length, bool randomize
     player1.clear();
     player2.clear();
 
-    generateRecursiveMovesTree(boardTemp, pos);
+    generateMovesTree(boardTemp, pos);
     cerr << "WinningMovesP1#" << player1.size() << endl;
     toPrint("Moves P1 :", player1);
     cerr << "WinningMovesP2#" << player2.size() << endl;
     toPrint("Moves P2 :", player2);
 
     sortPlayer1(1); /// TO DO : determine maxBranchLength from generate function, avoid comparing different moves length
-    //sortPlayer2(1);
 
     generated = true;
 }
@@ -89,7 +88,7 @@ Si un groupe n'omet qu'un seul coup : le transformer en "non" logique (ex : p1 =
 Si plusieurs solutions englobent toutes les possibilites : les fusionner (ex : p1 = [1 0], p2 = [1 !0 !0], p' = [1 !0 !0])
 **/
 
-void Bruteforce::generateRecursiveMovesTree(Action boardTemp, ustring pos) {
+void Bruteforce::generateMovesTree(Action boardTemp, ustring pos) {
     unsigned char i, _size = pos.size(), player2Won = 0;
     bool player1Move = (boardTemp.getPlayerPawn() == 'x');
     ustring tmp;
@@ -99,7 +98,7 @@ void Bruteforce::generateRecursiveMovesTree(Action boardTemp, ustring pos) {
             if(boardTemp.continueGame()) {
                 tmp = pos;
                 tmp.erase(tmp.find_first_of(tmp[i]), 1); /// Getting ride of played move
-                generateRecursiveMovesTree(boardTemp, tmp);
+                generateMovesTree(boardTemp, tmp);
             } else if(player1Move) { /// AI P1 win
                 player1.push_back(boardTemp.getMovesTree());
             } else player2Won++; /// AI P2 win
@@ -164,8 +163,6 @@ void Bruteforce::sortPlayer1(unsigned char maxBranchLength) {
         }
     }
 }
-
-void Bruteforce::sortPlayer2(unsigned char maxBranchLength) {}
 
 bool Bruteforce::playNextMove(Action &currentBoardState) {
     unsigned char nbPawnsPlayed = currentBoardState.getNbPawnsPlayed(), maxNbPawns = currentBoardState.getMaxNbPawns(), pos;

@@ -217,11 +217,11 @@ int main() {
              << "Nouvelle Taille : " << length+0 << endl;
     }
     if(playerR == "Bruteforce") {
-        bf.generateRecursiveMovesTree(length, false);
+        bf.generateMovesTree(length, false);
         bf.displayPlayer1MovesTree();
     }
     if(playerL == "Bruteforce") {
-        bf.generateRecursiveMovesTree(length, false);
+        bf.generateMovesTree(length, false);
         bf.displayPlayer2MovesTree();
     }
     moves.displayBoard();

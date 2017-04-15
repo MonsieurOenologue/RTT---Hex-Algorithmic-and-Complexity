@@ -17,10 +17,9 @@ private :
 public :
                     Bruteforce();
                     ~Bruteforce();
-    void            generateRecursiveMovesTree(unsigned char length, bool randomize);
-    void            generateRecursiveMovesTree(Action boardTemp, ustring pos);
+    void            generateMovesTree(unsigned char length, bool randomize);
+    void            generateMovesTree(Action boardTemp, ustring pos);
     void            sortPlayer1(unsigned char maxBranchLength);
-    void            sortPlayer2(unsigned char maxBranchLength);
     bool            playNextMove(Action &currentBoardState);
     void            displayPlayer1MovesTree();
     void            displayPlayer2MovesTree();

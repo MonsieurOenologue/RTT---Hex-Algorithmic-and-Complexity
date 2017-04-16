@@ -68,13 +68,8 @@ void Bruteforce::generateMovesTree(unsigned char length, bool randomize) {
     player1.clear();
     player2.clear();
 
-    generateMovesTree(boardTemp, pos);
-    cerr << "WinningMovesP1#" << player1.size() << endl;
-    toPrint("Moves P1 :", player1);
-    cerr << "WinningMovesP2#" << player2.size() << endl;
-    toPrint("Moves P2 :", player2);
-
-    sortPlayer1(1); /// TO DO : determine maxBranchLength from generate function, avoid comparing different moves length
+    cout << "Chargement des solutions de Bruteforce..." << endl;
+    player1 = generateMovesTree(boardTemp, pos);
 
     generated = true;
 }
@@ -88,19 +83,34 @@ Si un groupe n'omet qu'un seul coup : le transformer en "non" logique (ex : p1 =
 Si plusieurs solutions englobent toutes les possibilites : les fusionner (ex : p1 = [1 0], p2 = [1 !0 !0], p' = [1 !0 !0])
 **/
 
-void Bruteforce::generateMovesTree(Action boardTemp, ustring pos) {
+vector<ustring> Bruteforce::generateMovesTree(Action boardTemp, ustring pos) {
     unsigned char i, _size = pos.size(), player2Won = 0;
+    unsigned long long maxi = 0;
     bool player1Move = (boardTemp.getPlayerPawn() == 'x');
     ustring tmp;
+    vector<ustring> solved, maybe, temp;
+    solved.clear();
+    maybe.clear();
 
     for(i = 0; i < _size; ++i) {
         if(boardTemp.setPosition(pos[i])) {
             if(boardTemp.continueGame()) {
                 tmp = pos;
                 tmp.erase(tmp.find_first_of(tmp[i]), 1); /// Getting ride of played move
-                generateMovesTree(boardTemp, tmp);
+                temp = generateMovesTree(boardTemp, tmp);
+                if(!player1Move) {
+                    maybe.insert(maybe.end(), temp.begin(), temp.end());
+                } else {
+                    if(maxi < temp.size()) {
+                        maxi = temp.size();
+                        maybe.clear();
+                    }
+                    if(maxi == temp.size()) {
+                        maybe.insert(maybe.end(), temp.begin(), temp.end());
+                    }
+                }
             } else if(player1Move) { /// AI P1 win
-                player1.push_back(boardTemp.getMovesTree());
+                solved.push_back(boardTemp.getMovesTree());
             } else player2Won++; /// AI P2 win
             if(!boardTemp.undoMove()) cerr << "Error : No move to undo." << endl;
         } else {
@@ -114,54 +124,10 @@ void Bruteforce::generateMovesTree(Action boardTemp, ustring pos) {
         tmp.pop_back();
         player2.push_back(tmp);
     }
-}
 
-void Bruteforce::sortPlayer1(unsigned char maxBranchLength) {
-    unsigned char i, j, k, cpt, MinMax;
-    ustring old, tmp;
-    vector<ustring> pawns;
+    if(solved.empty()) return maybe;
 
-    for(k = 1; k <= maxBranchLength; ++k) {
-        old.clear();
-        tmp.clear();
-        pawns.clear();
-        for(i = 0, cpt = 1, MinMax = 0, old.push_back(255), pawns.push_back(old); i < player1.size(); ++i, ++cpt) {
-            tmp = player1[i].substr(0, k);
-            if(old.compare(tmp) != 0) {
-                old = tmp;
-                cpt = 1;
-            }
-            for(j = 0; j < pawns.size(); ++j) {
-                if(pawns[j].compare(tmp) != 0) {
-                    if(MinMax == cpt) { /// Handle multiple winning moves
-                        pawns.push_back(tmp);
-                    } else if(k % 2 == 1 && MinMax < cpt) {
-                        pawns.clear();
-                        pawns.push_back(tmp);
-                        MinMax = cpt;
-                        cpt = 0;
-                    } else if(k % 2 == 0 && MinMax > cpt) {
-                        pawns.clear();
-                        pawns.push_back(tmp);
-                        MinMax = cpt;
-                        cpt = 0;
-                    }
-                    break;
-                }
-            }
-            if(j == pawns.size()) MinMax++;
-        }
-        for(i = 0; i < player1.size(); ++i) {
-            tmp = player1[i].substr(0, k);
-            for(j = 0; j < pawns.size(); ++j) {
-                if(tmp == pawns[j]) break;
-            }
-            if(j == pawns.size()) {
-                player1.erase(player1.begin() + i);
-                i--;
-            }
-        }
-    }
+    return solved;
 }
 
 bool Bruteforce::playNextMove(Action &currentBoardState) {
@@ -198,7 +164,9 @@ bool Bruteforce::playNextMove(Action &currentBoardState) {
 
 void Bruteforce::displayPlayer1MovesTree() {
     unsigned long long i, j;
-    cerr << "Il y a " << player1.size() << " solutions." << endl;
+    cout << "Il y a " << player1.size() << " solutions pour le joueur1." << endl
+         << "Appuyez sur une touche pour continuer...";
+    cin.sync(); cin.get();
     for(i = 0; i < player1.size(); ++i) {
         for(j = 0; j < player1[i].size(); ++j) {
             cout << player1[i][j]+0 << " ";
@@ -209,7 +177,9 @@ void Bruteforce::displayPlayer1MovesTree() {
 
 void Bruteforce::displayPlayer2MovesTree() {
     unsigned long long i, j;
-    cerr << "Il y a " << player2.size() << " solutions." << endl;
+    cout << "Il y a " << player2.size() << " solutions pour le joueur2." << endl
+         << "Appuyez sur une touche pour continuer...";
+    cin.sync(); cin.get();
     for(i = 0; i < player2.size(); ++i) {
         for(j = 0; j < player2[i].size(); ++j) {
             cout << player2[i][j]+0 << " ";

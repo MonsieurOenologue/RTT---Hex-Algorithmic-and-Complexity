@@ -84,7 +84,7 @@ Si plusieurs solutions englobent toutes les possibilites : les fusionner (ex : p
 **/
 
 vector<ustring> Bruteforce::generateMovesTree(Action boardTemp, ustring pos) {
-    unsigned char i, _size = pos.size(), player2Won = 0;
+    unsigned char i, _size = pos.size();
     unsigned long long maxi = 0;
     bool player1Move = (boardTemp.getPlayerPawn() == 'x');
     ustring tmp;
@@ -111,18 +111,12 @@ vector<ustring> Bruteforce::generateMovesTree(Action boardTemp, ustring pos) {
                 }
             } else if(player1Move) { /// AI P1 win
                 solved.push_back(boardTemp.getMovesTree());
-            } else player2Won++; /// AI P2 win
+            } else return solved; /// AI P2 win
             if(!boardTemp.undoMove()) cerr << "Error : No move to undo." << endl;
         } else {
             cerr << "Error : Unexpected position " << pos[i]+0;
             toPrint(" on moves", boardTemp.getMovesTree());
         }
-    }
-
-    if(player2Won != 0) {
-        tmp = boardTemp.getMovesTree();
-        tmp.pop_back();
-        player2.push_back(tmp);
     }
 
     if(solved.empty()) return maybe;

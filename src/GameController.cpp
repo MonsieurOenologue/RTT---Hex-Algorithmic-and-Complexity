@@ -198,7 +198,7 @@ int main() {
     cin >> playerR;
     playConsole = (playerR[0] != 'i');
     cout << "Aide : \"RandAI\" jouera aleatoirement." << endl
-         << "\"Bruteforce\" (J1) peux jouer en plateau de taille max 2." << endl
+         << "\"Bruteforce\" (J1) peux jouer en plateau de taille max 4." << endl
          << "J1 'x' joue \"haut/bas\" tandis que J2 'o' joue \"gauche/droite\"." << endl
          << "Entrez le nom du joueur 1 (rouge) : ";
     cin >> playerR;
@@ -218,12 +218,12 @@ int main() {
     }
     if(playerR == "Bruteforce") {
         bf.generateMovesTree(length, false);
-        bf.displayPlayer1MovesTree();
+        //bf.displayPlayer1MovesTree();
     }
-    if(playerL == "Bruteforce") {
+    /*if(playerL == "Bruteforce") {
         bf.generateMovesTree(length, false);
         bf.displayPlayer2MovesTree();
-    }
+    }*/
     moves.displayBoard();
     player1 = true;
     turnPlayed = false;

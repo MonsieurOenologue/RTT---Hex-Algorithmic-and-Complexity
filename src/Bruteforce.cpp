@@ -69,9 +69,21 @@ void Bruteforce::generateMovesTree(unsigned char length, bool randomize) {
     player2.clear();
 
     cout << "Chargement des solutions de Bruteforce..." << endl;
-    player1 = generateMovesTree(boardTemp, pos);
+    player1 = generateOptimizedFirstMove(boardTemp, pos);
+    cerr << "Il y a " << player1.size() << " solutions pour le joueur1." << endl
+         << "Appuyez sur une touche pour continuer...";
+    cin.sync(); cin.get();
 
     generated = true;
+}
+
+vector<ustring> Bruteforce::generateOptimizedFirstMove(Action boardTemp, ustring pos) {
+    unsigned char length = boardTemp.getLength(), pawn;
+    if(length % 2 == 0) pawn = ((length * (length - 1)) >> 1);
+    else pawn = ((length * length) >> 1);
+    boardTemp.setPosition(pawn);
+    pos.erase(pos.find_first_of(pawn), 1);
+    return generateMovesTree(boardTemp, pos);
 }
 
 /**Profondeur : p
@@ -84,13 +96,15 @@ Si plusieurs solutions englobent toutes les possibilites : les fusionner (ex : p
 **/
 
 vector<ustring> Bruteforce::generateMovesTree(Action boardTemp, ustring pos) {
-    unsigned char i, _size = pos.size();
-    unsigned long long maxi = 0;
-    bool player1Move = (boardTemp.getPlayerPawn() == 'x');
-    ustring tmp;
     vector<ustring> solved, maybe, temp;
     solved.clear();
     maybe.clear();
+    if(boardTemp.getNbPawnsPlayed() >= boardTemp.getLength() * 2 - 1) return solved;
+
+    ustring tmp;
+    unsigned long long maxi = 0;
+    unsigned char i, _size = pos.size();
+    bool player1Move = (boardTemp.getPlayerPawn() == 'x');
 
     for(i = 0; i < _size; ++i) {
         if(boardTemp.setPosition(pos[i])) {
@@ -111,6 +125,7 @@ vector<ustring> Bruteforce::generateMovesTree(Action boardTemp, ustring pos) {
                 }
             } else if(player1Move) { /// AI P1 win
                 solved.push_back(boardTemp.getMovesTree());
+                return solved;
             } else return solved; /// AI P2 win
             if(!boardTemp.undoMove()) cerr << "Error : No move to undo." << endl;
         } else {
@@ -152,6 +167,7 @@ bool Bruteforce::playNextMove(Action &currentBoardState) {
             }
         }
     }
+    cout << "Joue un coup au hasard..." << endl;
     while(!currentBoardState.setPosition(rand() % maxNbPawns));
     return true;
 }

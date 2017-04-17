@@ -18,6 +18,7 @@ public :
                     Bruteforce();
                     ~Bruteforce();
     void            generateMovesTree(unsigned char length, bool randomize);
+    vector<ustring> generateOptimizedFirstMove(Action boardTemp, ustring pos);
     vector<ustring> generateMovesTree(Action boardTemp, ustring pos);
     bool            playNextMove(Action &currentBoardState);
     void            displayPlayer1MovesTree();

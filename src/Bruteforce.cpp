@@ -169,12 +169,11 @@ bool Bruteforce::playNextMove(Action &currentBoardState) {
             if(lsize < player1[i].size() && locate.compare(player1[i].substr(0, lsize)) == 0) {
                 solutionsFound = true;
                 pos = player1[i][lsize];
-                if(currentBoardState.setPosition(pos)) return true;
                 if(winningMoves.find_first_of(pos) == ustring::npos) winningMoves.push_back(pos);
             } else if(solutionsFound) break;
         }
         while(!winningMoves.empty()) {
-            pos = rand() % winningMoves.size();
+            pos = winningMoves[rand() % winningMoves.size()];
             if(currentBoardState.setPosition(pos)) return true;
             else winningMoves.erase(winningMoves.find_first_of(pos), 1);
         }
@@ -183,12 +182,11 @@ bool Bruteforce::playNextMove(Action &currentBoardState) {
             if(lsize < player1[i].size() && locate.compare(player2[i].substr(0, lsize)) == 0) {
                 solutionsFound = true;
                 pos = player2[i][lsize];
-                if(currentBoardState.setPosition(pos)) return true;
                 if(winningMoves.find_first_of(pos) == ustring::npos) winningMoves.push_back(pos);
             } else if(solutionsFound) break;
         }
         while(!winningMoves.empty()) {
-            pos = rand() % winningMoves.size();
+            pos = winningMoves[rand() % winningMoves.size()];
             if(currentBoardState.setPosition(pos)) return true;
             else winningMoves.erase(winningMoves.find_first_of(pos), 1);
         }

@@ -78,12 +78,22 @@ void Bruteforce::generateMovesTree(unsigned char length, bool randomize) {
 }
 
 vector<ustring> Bruteforce::generateOptimizedFirstMove(Action boardTemp, ustring pos) {
-    unsigned char length = boardTemp.getLength(), pawn;
-    if(length % 2 == 0) pawn = ((length * (length - 1)) >> 1);
-    else pawn = ((length * length) >> 1);
-    boardTemp.setPosition(pawn);
-    pos.erase(pos.find_first_of(pawn), 1);
-    return generateMovesTree(boardTemp, pos);
+    unsigned char length = boardTemp.getLength(), pawn1, pawn2 = 255;
+    ustring pos2 = pos;
+    if(length % 2 == 0) {
+        pawn1 = ((length * (length - 1)) >> 1);
+        pawn2 = ((length * (length + 1)) >> 1) - 1;
+    } else pawn1 = ((length * length) >> 1);
+    boardTemp.setPosition(pawn1);
+    pos.erase(pos.find_first_of(pawn1), 1);
+    if(pawn2 == 255) return generateMovesTree(boardTemp, pos);
+    vector<ustring> solutions = generateMovesTree(boardTemp, pos), temp;
+    boardTemp.undoMove();
+    boardTemp.setPosition(pawn2);
+    pos2.erase(pos2.find_first_of(pawn2), 1);
+    temp = generateMovesTree(boardTemp, pos2);
+    solutions.insert(solutions.end(), temp.begin(), temp.end());
+    return solutions;
 }
 
 /**Profondeur : p
@@ -141,7 +151,7 @@ vector<ustring> Bruteforce::generateMovesTree(Action boardTemp, ustring pos) {
 
 bool Bruteforce::playNextMove(Action &currentBoardState) {
     unsigned char nbPawnsPlayed = currentBoardState.getNbPawnsPlayed(), maxNbPawns = currentBoardState.getMaxNbPawns(), pos;
-    bool isPlayer1 = (nbPawnsPlayed % 2 == 0);
+    bool isPlayer1 = (nbPawnsPlayed % 2 == 0), solutionsFound = false;
     unsigned long long i, _size = (isPlayer1) ? player1.size() : player2.size();
 
     if(nbPawnsPlayed == 0)
@@ -150,21 +160,36 @@ bool Bruteforce::playNextMove(Action &currentBoardState) {
         return false;
 
     srand(time(NULL));
-    ustring locate = currentBoardState.getMovesTree();
+    ustring locate = currentBoardState.getMovesTree(), winningMoves;
+    winningMoves.clear();
 
     if(isPlayer1) {
         for(i = 0; i < _size; ++i) {
             if(locate.compare(player1[i].substr(0, locate.size())) == 0) {
+                solutionsFound = true;
                 pos = player1[i][locate.size()];
-                if(currentBoardState.setPosition(pos)) return true;
-            }
+                if(winningMoves.find_first_of(pos) == ustring::npos) winningMoves.push_back(pos);
+            } else if(solutionsFound) break;
+        }
+        _size = locate.size();
+        while(!winningMoves.empty()) {
+            pos = player1[rand() % winningMoves.size()][_size];
+            if(currentBoardState.setPosition(pos)) return true;
+            else winningMoves.erase(winningMoves.find_first_of(pos), 1);
         }
     } else {
         for(i = 0; i < _size; ++i) {
             if(locate.compare(player2[i].substr(0, locate.size())) == 0) {
+                solutionsFound = true;
                 pos = player2[i][locate.size()];
-                if(currentBoardState.setPosition(pos)) return true;
-            }
+                if(winningMoves.find_first_of(pos) == ustring::npos) winningMoves.push_back(pos);
+            } else if(solutionsFound) break;
+        }
+        _size = locate.size();
+        while(!winningMoves.empty()) {
+            pos = player2[rand() % winningMoves.size()][_size];
+            if(currentBoardState.setPosition(pos)) return true;
+            else winningMoves.erase(winningMoves.find_first_of(pos), 1);
         }
     }
     cout << "Joue un coup au hasard..." << endl;

@@ -95,11 +95,13 @@ string HexBoard::getPlayers() {
 }
 
 string HexBoard::getPlayerL() {
-    return players.substr(0, ';');
+    if(players.empty() || players.find(';') == string::npos) return "PlayerL";
+    return players.substr(0, players.find(';'));
 }
 
 string HexBoard::getPlayerR() {
-    return players.substr(players.find(';')+1, players.length());
+    if(players.empty() || players.find(';') == string::npos || players.find(';')+1 >= players.size()) return "PlayerR";
+    return players.substr(players.find(';')+1, players.size());
 }
 
 ustring HexBoard::getMovesTree() {

@@ -150,7 +150,7 @@ vector<ustring> Bruteforce::generateMovesTree(Action boardTemp, ustring pos) {
 }
 
 bool Bruteforce::playNextMove(Action &currentBoardState) {
-    unsigned char nbPawnsPlayed = currentBoardState.getNbPawnsPlayed(), maxNbPawns = currentBoardState.getMaxNbPawns(), pos;
+    unsigned char nbPawnsPlayed = currentBoardState.getNbPawnsPlayed(), maxNbPawns = currentBoardState.getMaxNbPawns(), pos, lsize;
     bool isPlayer1 = (nbPawnsPlayed % 2 == 0), solutionsFound = false;
     unsigned long long i, _size = (isPlayer1) ? player1.size() : player2.size();
 
@@ -161,33 +161,32 @@ bool Bruteforce::playNextMove(Action &currentBoardState) {
 
     srand(time(NULL));
     ustring locate = currentBoardState.getMovesTree(), winningMoves;
+    lsize = locate.size();
     winningMoves.clear();
 
     if(isPlayer1) {
         for(i = 0; i < _size; ++i) {
-            if(locate.compare(player1[i].substr(0, locate.size())) == 0) {
+            if(lsize < player1[i].size() && locate.compare(player1[i].substr(0, lsize)) == 0) {
                 solutionsFound = true;
-                pos = player1[i][locate.size()];
+                pos = player1[i][lsize];
                 if(winningMoves.find_first_of(pos) == ustring::npos) winningMoves.push_back(pos);
             } else if(solutionsFound) break;
         }
-        _size = locate.size();
         while(!winningMoves.empty()) {
-            pos = player1[rand() % winningMoves.size()][_size];
+            pos = player1[rand() % winningMoves.size()][lsize];
             if(currentBoardState.setPosition(pos)) return true;
             else winningMoves.erase(winningMoves.find_first_of(pos), 1);
         }
     } else {
         for(i = 0; i < _size; ++i) {
-            if(locate.compare(player2[i].substr(0, locate.size())) == 0) {
+            if(lsize < player1[i].size() && locate.compare(player2[i].substr(0, lsize)) == 0) {
                 solutionsFound = true;
-                pos = player2[i][locate.size()];
+                pos = player2[i][lsize];
                 if(winningMoves.find_first_of(pos) == ustring::npos) winningMoves.push_back(pos);
             } else if(solutionsFound) break;
         }
-        _size = locate.size();
         while(!winningMoves.empty()) {
-            pos = player2[rand() % winningMoves.size()][_size];
+            pos = player2[rand() % winningMoves.size()][lsize];
             if(currentBoardState.setPosition(pos)) return true;
             else winningMoves.erase(winningMoves.find_first_of(pos), 1);
         }

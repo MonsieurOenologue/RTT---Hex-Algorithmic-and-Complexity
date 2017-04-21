@@ -27,7 +27,7 @@ using namespace std;
  *  @date    25/02/2017
  *  @version 1.0
  *
- *  @brief
+ *  @brief Tony le bricoleur
  *
  *  @section DESCRIPTION
  *
@@ -135,13 +135,13 @@ void play() {
         turnPlayed = false;
         currentPlayer = ((player1) ? playerR : playerL);
         cout << "C'est au tour de " << currentPlayer << "." << endl;
-        if(currentPlayer == "RandAI") {
+        if(currentPlayer == "R") {
             do {
                 x = rand() % length;
                 y = rand() % length;
             } while(!moves.setPosition(x, y));
             turnPlayed = true;
-        } else if(currentPlayer == "Bruteforce") {
+        } else if(currentPlayer == "B") {
             if(bf.playNextMove(moves)) turnPlayed = true;
             else {
                 cerr << "Bruteforce ne peux pas jouer sur ce plateau..." << endl;
@@ -197,8 +197,8 @@ int main() {
          << "Voulez-vous jouer dans la console (c : defaut) ou dans l'interface (i) ?" << endl;
     cin >> playerR;
     playConsole = (playerR[0] != 'i');
-    cout << "Aide : \"RandAI\" jouera aleatoirement." << endl
-         << "\"Bruteforce\" (J1) peux jouer en plateau de taille max 4." << endl
+    cout << "Aide : \"R\" pour Random jouera aleatoirement." << endl
+         << "\"B\" pour Bruteforce, (J1) peut jouer en plateau de taille max 4." << endl
          << "J1 'x' joue \"haut/bas\" tandis que J2 'o' joue \"gauche/droite\"." << endl
          << "Entrez le nom du joueur 1 (rouge) : ";
     cin >> playerR;
@@ -216,7 +216,7 @@ int main() {
         cerr << "Taille '" << nL << "' impossible..." << endl
              << "Nouvelle Taille : " << length+0 << endl;
     }
-    if(playerR == "Bruteforce") {
+    if(playerR == "B") {
         bf.generateMovesTree(length, false);
         //bf.displayPlayer1MovesTree();
     }

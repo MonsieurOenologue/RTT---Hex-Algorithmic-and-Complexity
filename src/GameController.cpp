@@ -36,7 +36,7 @@ using namespace std;
 Action moves;
 Bruteforce bf;
 mutex playing;
-bool player1, turnPlayed, playConsole, keepGoing, color;
+bool player1, turnPlayed, playConsole, keepGoing, color, borders[4];
 string playerR, playerL;
 
 unsigned char factor = 1, length = 11;
@@ -66,6 +66,15 @@ void glDrawHexagon(float width, float height) {
     (color) ? glBegin(GL_POLYGON) : glBegin(GL_LINE_LOOP);
     for(unsigned char i = 0; i < 6; ++i) {
         angle = hex_corner_angle(i);
+        if(!color) {
+            if((borders[0] && i > 3) ||
+               (borders[1] && (i == 1 || i == 2)))
+                glColor3f(1, 0, 0);
+            else if((borders[2] && (i == 2 || i == 3)) ||
+                (borders[3] && (i == 0 || i == 5)))
+                glColor3f(0, 0, 1);
+            else glColor3f(0, 0, 0);
+        }
         glVertex2i(hex_cornerX(angle, width), hex_cornerY(angle, height));
     }
     glEnd();
@@ -78,8 +87,12 @@ void glDrawFlatI(int maxWidth, int maxHeight) {
     offsetX = length * 1.5 * factor;
     offsetY = sqrt(3) * length * (3 / 2) * factor;
     for(i = 0, height = offsetX; i < length; ++i) {
+        borders[0] = (i == 0);
+        borders[1] = (i + 1 == length);
         for(j = 0, width = i * sqrt(3) / 2 * length * factor + offsetY; j < length; ++j) {
             (color) ? glColor3f(colors[(i*length+j)*3], colors[(i*length+j)*3+1], colors[(i*length+j)*3+2]) : glColor3f(0, 0, 0);
+            borders[2] = (j == 0);
+            borders[3] = (j + 1 == length);
             glDrawHexagon(width, height);
             width += sqrt(3) * length * factor;
         }
@@ -124,6 +137,8 @@ void glInit() {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glClearColor(1.0, 1.0, 1.0, 1.0);
+    glShadeModel(GL_FLAT);
+    glLineWidth(2);
 }
 
 void play() {

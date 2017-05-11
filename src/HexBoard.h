@@ -37,6 +37,8 @@ public :
     unsigned char       getNbPawnsPlayed();
     unsigned char       getMaxNbPawns();
     unsigned char       getPlayerPawn();
+    bool                isPlayer1Turn();
+    bool                isPlayer2Turn();
     void                setPlayers(string playerL, string playerR);
     string              getPlayers();
     string              getPlayerL();

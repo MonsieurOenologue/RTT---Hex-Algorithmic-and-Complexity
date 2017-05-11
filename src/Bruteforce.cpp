@@ -57,27 +57,35 @@ FinPour**/
 void Bruteforce::generateMovesTree(unsigned char length, bool randomize) {
     if(generated) return;
 
-    unsigned char i, maxNbPawns = length * length;
+    unsigned char i, maxNbPawns = length * length;//, halfNbPawns = maxNbPawns >> 1;
     Action boardTemp(length);
     ustring pos;
     pos.clear();
 
-    for(i = 0; i < maxNbPawns; ++i) pos += i;
+    for(i = 0; i < maxNbPawns; ++i) pos += i; // Unordered
+    // Order from center cells to angle ones
+    /*for(i = 1; i <= halfNbPawns; ++i) {
+        pos += halfNbPawns - i;
+        pos += halfNbPawns + i - (halfNbPawns % 2 == 0);
+    }*/
 
     random = randomize;
     player1.clear();
     player2.clear();
 
     cout << "Chargement des solutions de Bruteforce..." << endl;
-    player1 = generateOptimizedFirstMove(boardTemp, pos);
-    cerr << "Il y a " << player1.size() << " solutions pour le joueur1." << endl
+
+    generateMovesTree(boardTemp, pos, player1, player2);
+
+    cout << "Chargement termine." << endl
          << "Appuyez sur une touche pour continuer...";
-    cin.sync(); cin.get();
+    cin.sync();
+    cin.get();
 
     generated = true;
 }
 
-vector<ustring> Bruteforce::generateOptimizedFirstMove(Action boardTemp, ustring pos) {
+/*vector<ustring> Bruteforce::generateOptimizedFirstMove(Action boardTemp, ustring pos) {
     unsigned char length = boardTemp.getLength(), pawn1, pawn2 = 255;
     ustring pos2 = pos;
     if(length % 2 == 0) {
@@ -94,7 +102,7 @@ vector<ustring> Bruteforce::generateOptimizedFirstMove(Action boardTemp, ustring
     temp = generateMovesTree(boardTemp, pos2);
     solutions.insert(solutions.end(), temp.begin(), temp.end());
     return solutions;
-}
+}*/
 
 /**Profondeur : p
 Si une solution est trouvee en p : inutile de parcourir en p+1
@@ -105,38 +113,41 @@ Si un groupe n'omet qu'un seul coup : le transformer en "non" logique (ex : p1 =
 Si plusieurs solutions englobent toutes les possibilites : les fusionner (ex : p1 = [1 0], p2 = [1 !0 !0], p' = [1 !0 !0])
 **/
 
-vector<ustring> Bruteforce::generateMovesTree(Action boardTemp, ustring pos) {
-    vector<ustring> solved, maybe, temp;
-    solved.clear();
-    maybe.clear();
-    if(boardTemp.getNbPawnsPlayed() >= boardTemp.getLength() * 2 - 1) return solved;
-
+unsigned char Bruteforce::generateMovesTree(Action boardTemp, ustring pos, vector<ustring> &solvedP1, vector<ustring> &solvedP2) {
+    vector<ustring> tmpP1, tmpP2, solved, maybeP1, maybeP2;
     ustring tmp;
-    unsigned long long maxi = 0;
-    unsigned char i, _size = pos.size();
-    bool player1Move = (boardTemp.getPlayerPawn() == 'x');
+    bool player1Move = boardTemp.isPlayer1Turn();
+    unsigned char i, _size = pos.size(), depth, minDepth = (player1Move) ? 255 : 0;
 
     for(i = 0; i < _size; ++i) {
         if(boardTemp.setPosition(pos[i])) {
             if(boardTemp.continueGame()) {
                 tmp = pos;
                 tmp.erase(tmp.find_first_of(tmp[i]), 1); /// Getting ride of played move
-                temp = generateMovesTree(boardTemp, tmp);
-                if(!player1Move) {
-                    maybe.insert(maybe.end(), temp.begin(), temp.end());
-                } else {
-                    if(maxi < temp.size()) {
-                        maxi = temp.size();
-                        maybe.clear();
+                depth = generateMovesTree(boardTemp, tmp, tmpP1, tmpP2);
+                if(player1Move) {
+                    if(depth < minDepth) {
+                        minDepth = depth;
+                        maybeP1.clear();
                     }
-                    if(maxi == temp.size()) {
-                        maybe.insert(maybe.end(), temp.begin(), temp.end());
+                    if(depth == minDepth) {
+                        maybeP1.insert(maybeP1.end(), tmpP1.begin(), tmpP1.end());
+                    }
+                    maybeP2.insert(maybeP2.end(), tmpP2.begin(), tmpP2.end());
+                } else {
+                    if(depth > minDepth) {
+                        minDepth = depth;
+                        maybeP1.clear();
+                        maybeP2.clear();
+                    }
+                    if(depth == minDepth) {
+                        maybeP1.insert(maybeP1.end(), tmpP1.begin(), tmpP1.end());
+                        maybeP2.insert(maybeP2.end(), tmpP2.begin(), tmpP2.end());
                     }
                 }
-            } else if(player1Move) { /// AI P1 win
-                solved.push_back(boardTemp.getMovesTree());
-                return solved;
-            } else return solved; /// AI P2 win
+                tmpP1.clear();
+                tmpP2.clear();
+            } else solved.push_back(boardTemp.getMovesTree());
             if(!boardTemp.undoMove()) cerr << "Error : No move to undo." << endl;
         } else {
             cerr << "Error : Unexpected position " << pos[i]+0;
@@ -144,22 +155,32 @@ vector<ustring> Bruteforce::generateMovesTree(Action boardTemp, ustring pos) {
         }
     }
 
-    if(solved.empty()) return maybe;
-
-    return solved;
+    if(solved.empty()) {
+        solvedP1 = maybeP1;
+        solvedP2 = maybeP2;
+        return minDepth;
+    } else if(player1Move) {
+        solvedP1 = solved;
+        solvedP2 = maybeP2;
+        return boardTemp.getNbPawnsPlayed();
+    } else {
+        solvedP1 = maybeP1;
+        solvedP2 = solved;
+        return 255 - boardTemp.getNbPawnsPlayed();
+    }
 }
 
 bool Bruteforce::playNextMove(Action &currentBoardState) {
     unsigned char nbPawnsPlayed = currentBoardState.getNbPawnsPlayed(), maxNbPawns = currentBoardState.getMaxNbPawns(), pos, lsize;
-    bool isPlayer1 = (nbPawnsPlayed % 2 == 0), solutionsFound = false;
+    bool isPlayer1 = currentBoardState.isPlayer1Turn(), solutionsFound = false;
     unsigned long long i, _size = (isPlayer1) ? player1.size() : player2.size();
 
+    srand(time(NULL));
     if(nbPawnsPlayed == 0)
         return currentBoardState.setPosition(player1[rand() % _size][0]);
     if(nbPawnsPlayed == maxNbPawns)
         return false;
 
-    srand(time(NULL));
     ustring locate = currentBoardState.getMovesTree(), winningMoves;
     lsize = locate.size();
     winningMoves.clear();
@@ -179,7 +200,7 @@ bool Bruteforce::playNextMove(Action &currentBoardState) {
         }
     } else {
         for(i = 0; i < _size; ++i) {
-            if(lsize < player1[i].size() && locate.compare(player2[i].substr(0, lsize)) == 0) {
+            if(lsize < player2[i].size() && locate.compare(player2[i].substr(0, lsize)) == 0) {
                 solutionsFound = true;
                 pos = player2[i][lsize];
                 if(winningMoves.find_first_of(pos) == ustring::npos) winningMoves.push_back(pos);

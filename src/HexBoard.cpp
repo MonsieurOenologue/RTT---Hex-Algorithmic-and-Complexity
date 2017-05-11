@@ -86,6 +86,14 @@ unsigned char HexBoard::getPlayerPawn() {
     return (nbPawnsPlayed % 2) ? 'o' : 'x';
 }
 
+bool HexBoard::isPlayer1Turn() {
+    return (nbPawnsPlayed % 2 == 0);
+}
+
+bool HexBoard::isPlayer2Turn() {
+    return (nbPawnsPlayed % 2);
+}
+
 void HexBoard::setPlayers(string playerL, string playerR) {
     players = playerL + ";" + playerR;
 }

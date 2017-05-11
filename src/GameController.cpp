@@ -149,7 +149,7 @@ void play() {
     while(moves.continueGame()) {
         turnPlayed = false;
         currentPlayer = ((player1) ? playerR : playerL);
-        cout << "C'est au tour de " << currentPlayer << "." << endl;
+        cout << "C'est au tour du joueur " << currentPlayer << ((player1) ? " (rouge)" : " (bleu)") << "." << endl;
         if(currentPlayer == "R") {
             do {
                 x = rand() % length;
@@ -231,14 +231,11 @@ int main() {
         cerr << "Taille '" << nL << "' impossible..." << endl
              << "Nouvelle Taille : " << length+0 << endl;
     }
-    if(playerR == "B") {
+    if(playerR == "B" || playerL == "B") {
         bf.generateMovesTree(length, false);
-        //bf.displayPlayer1MovesTree();
+        if(playerR == "B") bf.displayPlayer1MovesTree();
+        if(playerL == "B") bf.displayPlayer2MovesTree();
     }
-    /*if(playerL == "Bruteforce") {
-        bf.generateMovesTree(length, false);
-        bf.displayPlayer2MovesTree();
-    }*/
     moves.displayBoard();
     player1 = true;
     turnPlayed = false;

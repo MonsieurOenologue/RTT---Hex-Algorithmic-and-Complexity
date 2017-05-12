@@ -31,13 +31,16 @@ HexBoard::HexBoard(unsigned char newLength) {
 
 HexBoard::~HexBoard() {
     movesTree.clear();
+    positions.clear();
     board.clear();
 }
 
 void HexBoard::initBoard() {
     board.resize(length);
-    for(unsigned char i = 0; i < length; ++i) {
-        board[i] = ustring(length, ' ');
+    positions.clear();
+    for(unsigned char i = 0; i < maxNbPawns; ++i) {
+        positions += i;
+        if(i < length) board[i % length] = ustring(length, ' ');
     }
 }
 
@@ -54,6 +57,7 @@ unsigned char HexBoard::getLength() {
 }
 
 void HexBoard::pushLatestMove(unsigned char newMove) {
+    positions.erase(positions.find_first_of(newMove), 1); /// Getting ride of played move
     movesTree.push_back(newMove);
     nbPawnsPlayed++;
 }
@@ -66,12 +70,9 @@ unsigned char HexBoard::pullLatestMove() {
     if(nbPawnsPlayed == 0) return 255;
     nbPawnsPlayed--;
     unsigned char latestMove = movesTree[nbPawnsPlayed];
+    positions.push_back(latestMove); /// Push back unplayed move
     movesTree.pop_back();
     return latestMove;
-}
-
-void HexBoard::setNbPawnsPlayed(unsigned char newNbPawnsPlayed) {
-    nbPawnsPlayed = newNbPawnsPlayed;
 }
 
 unsigned char HexBoard::getNbPawnsPlayed() {
@@ -116,12 +117,8 @@ ustring HexBoard::getMovesTree() {
     return movesTree;
 }
 
-FILE* HexBoard::getRules() {
-    return NULL;
-}
-
-bool HexBoard::swapRule() {
-    return false;
+ustring HexBoard::getPositions() {
+    return positions;
 }
 
 bool HexBoard::continueGame() {
@@ -160,6 +157,12 @@ void HexBoard::displayBoard() {
     cout << endl << endl;
 }
 
+bool HexBoard::emptyPosition(unsigned char pos) {
+    unsigned char x = ceil(pos / length), y = pos % length;
+    if(pos >= maxNbPawns || board[x][y] != ' ') return false;
+    return true;
+}
+
 bool HexBoard::setPosition(unsigned char pos) {
     unsigned char x = ceil(pos / length), y = pos % length;
     if(pos >= maxNbPawns || board[x][y] != ' ') return false;
@@ -180,54 +183,6 @@ bool HexBoard::resetLatestPosition() {
     if(latestMove == 255) return false;
     board[ceil(latestMove / length)][latestMove % length] = ' ';
     return true;
-}
-
-bool HexBoard::pawnConnected(unsigned char x, unsigned char y) {
-    unsigned char v = board[x][y];
-    if(x != 0 && (board[x-1][y] == v || (y != length - 1 && board[x-1][y+1] == v))) {
-        return true;
-    }
-    if(x != length - 1 && (board[x+1][y] == v || (y != 0 && board[x+1][y-1] == v))) {
-        return true;
-    }
-    if(y != 0 && board[x][y-1] == v) {
-        return true;
-    }
-    if(y != length - 1 && board[x][y+1] == v) {
-        return true;
-    }
-    return false;
-}
-
-bool HexBoard::victoryByLinksMemory(unsigned char p) {
-    unsigned char x = ceil(p / length), y = p % length, v = board[x][y];
-
-    // TO DO : Insert current and linked pawns into matching var if connected to a side.
-    if(v == 'x') {
-        if(y == 0) {
-            // Add links into highToLowSide
-        } else if(y == length - 1) {
-           // Add links into lowToHighSide
-        } else if(pawnConnected(x, y) == 1) {
-           // Add pawn into matching var, if both : victory
-        }
-    } else { // v == 'o'
-        if(x == 0) {
-            // Add links into leftToRightSide
-        } else if(x == length - 1) {
-            // Add links into rightToLeftSide
-        } else if(pawnConnected(x, y) == 1) {
-           // Add pawn into matching var, if both : victory
-        }
-    }
-
-    // Number of pawns played is not significant enough to reach victory for both players.
-    if(nbPawnsPlayed < length * 2 - 1) {
-        return false;
-    }
-
-    // No victory found.
-    return false;
 }
 
 bool HexBoard::victoryByRecursion(unsigned char x, unsigned char y) {

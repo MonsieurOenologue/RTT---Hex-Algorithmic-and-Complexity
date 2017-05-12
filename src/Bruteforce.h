@@ -12,14 +12,14 @@ private :
     vector<ustring> player1;
     vector<ustring> player2;
     bool            generated;
-    bool            random;
 
 public :
                     Bruteforce();
                     ~Bruteforce();
-    void            generateMovesTree(unsigned char length, bool randomize);
-    vector<ustring> generateOptimizedFirstMove(Action boardTemp, ustring pos);
-    unsigned char   generateMovesTree(Action boardTemp, ustring pos, vector<ustring> &solvedP1, vector<ustring> &solvedP2);
+    bool            isGenerated();
+    void            generateMovesTree(unsigned char length);
+    void            generateMovesTree(Action currentBoard);
+    unsigned char   generateMovesTree(Action boardTemp, vector<ustring> &solvedP1, vector<ustring> &solvedP2);
     bool            playNextMove(Action &currentBoardState);
     void            displayPlayer1MovesTree();
     void            displayPlayer2MovesTree();

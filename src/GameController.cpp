@@ -144,19 +144,30 @@ void glInit() {
 void play() {
     unsigned char x, y, latestMove;
     string currentPlayer;
+    ustring pos;
     srand(time(NULL));
 
     while(moves.continueGame()) {
         turnPlayed = false;
+        pos = moves.getPositions();
         currentPlayer = ((player1) ? playerR : playerL);
         cout << "C'est au tour du joueur " << currentPlayer << ((player1) ? " (rouge)" : " (bleu)") << "." << endl;
-        if(currentPlayer == "R") {
-            do {
-                x = rand() % length;
-                y = rand() % length;
-            } while(!moves.setPosition(x, y));
+        if(currentPlayer == "R" || (currentPlayer == "B" && moves.getMaxNbPawns() - moves.getNbPawnsPlayed() > 9)) {
+            x = pos[rand() % pos.size()];
+            if(moves.setPosition(x)) turnPlayed = true;
+            else {
+                cerr << ((currentPlayer == "R") ? "Random" : "Bruteforce") << " ne peux pas jouer sur ce plateau..." << endl;
+                cerr << "pos = " << x+0 << endl;
+                cin.sync();
+                cin.get();
+            }
             turnPlayed = true;
         } else if(currentPlayer == "B") {
+            if(!bf.isGenerated()) {
+                bf.generateMovesTree(moves);
+                //if(playerR == "B") bf.displayPlayer1MovesTree();
+                //if(playerL == "B") bf.displayPlayer2MovesTree();
+            }
             if(bf.playNextMove(moves)) turnPlayed = true;
             else {
                 cerr << "Bruteforce ne peux pas jouer sur ce plateau..." << endl;
@@ -213,7 +224,7 @@ int main() {
     cin >> playerR;
     playConsole = (playerR[0] != 'i');
     cout << "Aide : \"R\" pour Random jouera aleatoirement." << endl
-         << "\"B\" pour Bruteforce, (J1) peut jouer en plateau de taille max 4." << endl
+         << "\"B\" pour Bruteforce, joue aleatoirement si nombre case vide > 9." << endl
          << "J1 'x' joue \"haut/bas\" tandis que J2 'o' joue \"gauche/droite\"." << endl
          << "Entrez le nom du joueur 1 (rouge) : ";
     cin >> playerR;
@@ -230,11 +241,6 @@ int main() {
         length = 11;
         cerr << "Taille '" << nL << "' impossible..." << endl
              << "Nouvelle Taille : " << length+0 << endl;
-    }
-    if(playerR == "B" || playerL == "B") {
-        bf.generateMovesTree(length, false);
-        if(playerR == "B") bf.displayPlayer1MovesTree();
-        if(playerL == "B") bf.displayPlayer2MovesTree();
     }
     moves.displayBoard();
     player1 = true;

@@ -20,6 +20,7 @@ private :
     unsigned char       path;
     string              players;
     ustring             movesTree;
+    ustring             positions;
     vector<ustring>     board;
 
     void                initBoard();
@@ -33,7 +34,6 @@ public :
     void                pushLatestMove(unsigned char newMove);
     unsigned char       getLatestMove();
     unsigned char       pullLatestMove();
-    void                setNbPawnsPlayed(unsigned char newNbPawnsPlayed);
     unsigned char       getNbPawnsPlayed();
     unsigned char       getMaxNbPawns();
     unsigned char       getPlayerPawn();
@@ -44,15 +44,13 @@ public :
     string              getPlayerL();
     string              getPlayerR();
     ustring             getMovesTree();
-    FILE*               getRules();
-    bool                swapRule();
+    ustring             getPositions();
     bool                continueGame();
     void                displayBoard();
+    bool                emptyPosition(unsigned char pos);
     bool                setPosition(unsigned char pos);
     bool                setPosition(unsigned char x, unsigned char y);
     bool                resetLatestPosition();
-    bool                pawnConnected(unsigned char x, unsigned char y);
-    bool                victoryByLinksMemory(unsigned char p);
     bool                victoryByRecursion(unsigned char x, unsigned char y);
     unsigned char       victoryByRecursion(unsigned char x, unsigned char y, unsigned char p);
 };

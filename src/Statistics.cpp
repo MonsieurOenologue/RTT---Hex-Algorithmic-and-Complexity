@@ -1,13 +1,12 @@
 #include "Statistics.h"
 /**
- *  @file    Statistics.cpp
- *  @author  RTT
- *  @date    25/02/2017
- *  @version 1.0
+ *  \file    Statistics.cpp
+ *  \author  RTT
+ *  \date    25/02/2017
+ *  \version 1.0
  *
- *  @brief
+ *  \brief Meant to use all the stats from the games and give some results from it.
  *
- *  @section DESCRIPTION
  *
  */
 Statistics::Statistics() {}
@@ -15,6 +14,7 @@ Statistics::Statistics() {}
 Statistics::~Statistics() {}
 
 void initStats() {}
+
 
 void getStats() {}
 

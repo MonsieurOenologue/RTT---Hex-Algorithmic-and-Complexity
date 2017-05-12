@@ -1,15 +1,15 @@
 #include "Database.h"
 /**
- *  @file    Database.cpp
- *  @author  RTT
- *  @date    25/02/2017
- *  @version 1.0
+ *  \file    Database.cpp
+ *  \author  RTT
+ *  \date    25/02/2017
+ *  \version 1.0
  *
- *  @brief
- *
- *  @section DESCRIPTION
+ *  \brief Not implemented and deprecated, database functions (we chose file storage)
  *
  */
+
+
 Database::Database() {}
 
 Database::~Database() {}

@@ -1,14 +1,13 @@
 #include "HexBoard.h"
 
 /**
- *  @file    HexBoard.cpp
- *  @author  RTT
- *  @date    25/02/2017
- *  @version 1.0
+ *  \file    HexBoard.cpp
+ *  \author  RTT
+ *  \date    25/02/2017
+ *  \version 1.0
  *
- *  @brief
+ *  \brief Contains all the mechanics of the board
  *
- *  @section DESCRIPTION
  *
  */
 HexBoard::HexBoard() {

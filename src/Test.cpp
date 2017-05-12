@@ -2,14 +2,13 @@
 #include <vector>
 #include <string>
 /**
- *  @file    AIManager.cpp
- *  @author  RTT
- *  @date    25/02/2017
- *  @version 1.0
+ *  \file    AIManager.cpp
+ *  \author  RTT
+ *  \date    25/02/2017
+ *  \version 1.0
  *
- *  @brief
+ *  \brief Deprecated class, used to test some concepts in the first iterations of the project
  *
- *  @section DESCRIPTION
  *
  */
 using namespace std;

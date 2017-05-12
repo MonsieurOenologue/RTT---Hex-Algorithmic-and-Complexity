@@ -1,13 +1,12 @@
 #include "AITools.h"
 /**
- *  @file    AITools.cpp
- *  @author  RTT
- *  @date    25/02/2017
- *  @version 1.0
+ *  \file    AITools.cpp
+ *  \author  RTT
+ *  \date    25/02/2017
+ *  \version 1.0
  *
- *  @brief
+ *  \brief Contains some necessary tools for our "AI" algorithms.
  *
- *  @section DESCRIPTION
  *
  */
 AITools::AITools() {}

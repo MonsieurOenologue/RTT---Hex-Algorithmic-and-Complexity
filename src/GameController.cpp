@@ -22,14 +22,12 @@
 using namespace std;
 
 /**
- *  @file    GameController.cpp
- *  @author  RTT
- *  @date    25/02/2017
- *  @version 1.0
+ *  \file    GameController.cpp
+ *  \author  RTT
+ *  \date    25/02/2017
+ *  \version 1.0
  *
- *  @brief Programme pour jeu de Hex: ce fichier permet la gestion de la console et de l'interface graphique.
- *
- *  @section DESCRIPTION
+ *  \brief Manage console and GUI
  *
  */
 
@@ -42,22 +40,31 @@ string playerR, playerL;
 unsigned char factor = 1, length = 11;
 float offsetX = 0, offsetY = 0, *colors;
 
+
 float hex_corner_angle(unsigned char i) {
     short angle_deg = 60 * i + 30;
     return M_PI / 180 * angle_deg;
 }
 
+/**
+* \param angle_rad The angle in radian
+* \param x Line coordinates
+*/
 float hex_cornerX(float angle_rad, float x) {
     return length * factor * cos(angle_rad) + x;
 }
 
+/**
+* \param angle_rad The angle in radian
+* \param y Column coordinates
+*/
 float hex_cornerY(float angle_rad, float y) {
     return length * factor * sin(angle_rad) + y;
 }
 
-/** Convertit des coordonnées en pixel vers les coordonnées relatives au plateau du jeu de Hex.
-* \param x Coordonnée en ligne
-* \param y Coordonnée en colonne
+/** \brief Convert pixel coordinates into Hex board relatives coordinates.
+* \param x Line coordinates
+* \param y Column coordinates
 */
 void pixel_to_hex(double &x, double &y) {
     double q = ((x + length * factor) * sqrt(3) / 3 - y / 3) / length / factor, r = y * 2 / 3 / length / factor;
@@ -65,9 +72,9 @@ void pixel_to_hex(double &x, double &y) {
     x = round(r)-1;
 }
 
-/** Dessine un hexagone dans l'interface graphique à la position spécifiée.
-* \param width Position en largeur
-* \param height Position en hauteur
+/** \brief Draw hexagon in graphical interface to the specified position.
+* \param width Width position
+* \param height Height position
 */
 void glDrawHexagon(float width, float height) {
     float angle;
@@ -88,9 +95,9 @@ void glDrawHexagon(float width, float height) {
     glEnd();
 }
 
-/** Dessine un plateau de jeu de Hex dans l'interface graphique.
-* \param maxWidth Largeur maximale
-* \param maxHeight Hauteur maximale
+/** \brief Draw an Hex board in the GUI
+* \param maxWidth Max width
+* \param maxHeight Max height
 */
 void glDrawFlatI(int maxWidth, int maxHeight) {
     float width = sqrt(3) * length * (length + 1 + length / 2), height = length * (length + 1) * 1.5;
@@ -122,11 +129,11 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
     }
 }
 
-/** Gestion des évènements souris.
-* \param window Fenêtre de l'interface graphique.
-* \param key Bouton de la souris à vérifier.
-* \param action Pression du bouton de la souris.
-* \param mods Inutilisé ici.
+/** \brief Handle mouse events
+* \param window Window of the GUI
+* \param key Mouse button to check
+* \param action Pressure of mouse button
+* \param mods Not used here
 */
 static void mouse_button_callback(GLFWwindow* window, int key, int action, int mods) {
     double xpos, ypos;
@@ -150,7 +157,7 @@ static void mouse_button_callback(GLFWwindow* window, int key, int action, int m
     }
 }
 
-/** Initialise les paramètres d'OpenGL pour l'affichage graphique.
+/** \brief OpenGL initialization for display
 */
 void glInit() {
     glMatrixMode(GL_PROJECTION);
@@ -161,7 +168,7 @@ void glInit() {
     glLineWidth(2);
 }
 
-/** Gestion de la partie côté interface graphique.
+/** \brief Manage GUI
 */
 void play() {
     unsigned char x, y, latestMove;
@@ -246,7 +253,7 @@ void play() {
     keepGoing = false;
 }
 
-/** Déclaration de la partie du jeu de Hex et gestion de celle-ci côté console.
+/** \brief Declare Hex game and manage the console part of it.
 */
 int main() {
     cout << "Bienvenue sur Hexxxor3000!" << endl

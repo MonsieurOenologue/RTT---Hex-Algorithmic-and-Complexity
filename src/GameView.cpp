@@ -1,13 +1,12 @@
 #include "GameView.h"
 /**
- *  @file    GameView.cpp
- *  @author  RTT
- *  @date    25/02/2017
- *  @version 1.0
+ *  \file    GameView.cpp
+ *  \author  RTT
+ *  \date    25/02/2017
+ *  \version 1.0
  *
- *  @brief
+ *  \brief Was meant to be the view, actually not the view (see GameController)
  *
- *  @section DESCRIPTION
  *
  */
 GameView::GameView() {}

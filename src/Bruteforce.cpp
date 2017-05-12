@@ -1,13 +1,12 @@
 #include "Bruteforce.h"
 /**
- *  @file    Bruteforce.cpp
- *  @author  RTT
- *  @date    25/02/2017
- *  @version 1.0
+ *  \file    Bruteforce.cpp
+ *  \author  RTT
+ *  \date    25/02/2017
+ *  \version 1.0
  *
- *  @brief
+ *  \brief Contains the Bruteforce algorithm and its functions
  *
- *  @section DESCRIPTION
  *
  */
 

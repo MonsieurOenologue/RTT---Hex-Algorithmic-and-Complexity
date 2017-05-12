@@ -1,14 +1,13 @@
 #include "Action.h"
 
 /**
- *  @file    Action.cpp
- *  @author  RTT
- *  @date    25/02/2017
- *  @version 1.0
+ *  \file    Action.cpp
+ *  \author  RTT
+ *  \date    25/02/2017
+ *  \version 1.0
  *
- *  @brief
+ *  \brief Actions of a game (ie : play your turn)
  *
- *  @section DESCRIPTION
  *
  */
 Action::Action() {}

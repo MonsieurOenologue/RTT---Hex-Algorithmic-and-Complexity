@@ -27,7 +27,7 @@ using namespace std;
  *  @date    25/02/2017
  *  @version 1.0
  *
- *  @brief Tony le bricoleur
+ *  @brief Programme pour jeu de Hex: ce fichier permet la gestion de la console et de l'interface graphique.
  *
  *  @section DESCRIPTION
  *
@@ -55,12 +55,20 @@ float hex_cornerY(float angle_rad, float y) {
     return length * factor * sin(angle_rad) + y;
 }
 
+/** Convertit des coordonnées en pixel vers les coordonnées relatives au plateau du jeu de Hex.
+* \param x Coordonnée en ligne
+* \param y Coordonnée en colonne
+*/
 void pixel_to_hex(double &x, double &y) {
     double q = ((x + length * factor) * sqrt(3) / 3 - y / 3) / length / factor, r = y * 2 / 3 / length / factor;
     y = round(q)-1;
     x = round(r)-1;
 }
 
+/** Dessine un hexagone dans l'interface graphique à la position spécifiée.
+* \param width Position en largeur
+* \param height Position en hauteur
+*/
 void glDrawHexagon(float width, float height) {
     float angle;
     (color) ? glBegin(GL_POLYGON) : glBegin(GL_LINE_LOOP);
@@ -80,6 +88,10 @@ void glDrawHexagon(float width, float height) {
     glEnd();
 }
 
+/** Dessine un plateau de jeu de Hex dans l'interface graphique.
+* \param maxWidth Largeur maximale
+* \param maxHeight Hauteur maximale
+*/
 void glDrawFlatI(int maxWidth, int maxHeight) {
     float width = sqrt(3) * length * (length + 1 + length / 2), height = length * (length + 1) * 1.5;
     unsigned char i, j;
@@ -110,6 +122,12 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
     }
 }
 
+/** Gestion des évènements souris.
+* \param window Fenêtre de l'interface graphique.
+* \param key Bouton de la souris à vérifier.
+* \param action Pression du bouton de la souris.
+* \param mods Inutilisé ici.
+*/
 static void mouse_button_callback(GLFWwindow* window, int key, int action, int mods) {
     double xpos, ypos;
     if(keepGoing && !playConsole && !turnPlayed && key == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
@@ -132,6 +150,8 @@ static void mouse_button_callback(GLFWwindow* window, int key, int action, int m
     }
 }
 
+/** Initialise les paramètres d'OpenGL pour l'affichage graphique.
+*/
 void glInit() {
     glMatrixMode(GL_PROJECTION);
     glMatrixMode(GL_MODELVIEW);
@@ -141,6 +161,8 @@ void glInit() {
     glLineWidth(2);
 }
 
+/** Gestion de la partie côté interface graphique.
+*/
 void play() {
     unsigned char x, y, latestMove;
     string currentPlayer;
@@ -224,6 +246,8 @@ void play() {
     keepGoing = false;
 }
 
+/** Déclaration de la partie du jeu de Hex et gestion de celle-ci côté console.
+*/
 int main() {
     cout << "Bienvenue sur Hexxxor3000!" << endl
          << "Voulez-vous jouer dans la console (c : defaut) ou dans l'interface (i) ?" << endl;

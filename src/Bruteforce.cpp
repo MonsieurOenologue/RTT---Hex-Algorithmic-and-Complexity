@@ -22,25 +22,6 @@ Bruteforce::~Bruteforce() {
     player2.clear();
 }
 
-void toPrint(const char* message, ustring datas) {
-    cout << message;
-    for(unsigned char i = 0; i < datas.size(); ++i) {
-        cout << " " << (datas[i]+0);
-    }
-    cout << endl;
-}
-
-void toPrint(const char* message, vector<ustring> datas) {
-    cout << message << endl;
-    unsigned char i, j;
-    for(i = 0; i < datas.size(); ++i) {
-        for(j = 0; j < datas[i].size(); ++j) {
-            cout << (datas[i][j]+0) << " ";
-        }
-        cout << endl;
-    }
-}
-
 bool Bruteforce::isGenerated() {
     return generated;
 }
@@ -99,8 +80,7 @@ unsigned char Bruteforce::generateMovesTree(Action boardTemp, vector<ustring> &s
             } else solved.push_back(boardTemp.getMovesTree());
             if(!boardTemp.undoMove()) cerr << "Error : No move to undo." << endl;
         } else {
-            cerr << "Error : Unexpected position " << pos[i]+0;
-            toPrint(" on moves", boardTemp.getMovesTree());
+            cerr << "Error : Unexpected position " << pos[i]+0 << " on moves" << boardTemp.getMovesTree();
         }
     }
 
@@ -179,21 +159,15 @@ void Bruteforce::displayNbMovesPlayer2() {
 }
 
 void Bruteforce::displayPlayer1MovesTree() {
-    unsigned int i, j;
+    unsigned int i;
     for(i = 0; i < player1.size(); ++i) {
-        for(j = 0; j < player1[i].size(); ++j) {
-            cout << player1[i][j]+0 << " ";
-        }
-        cout << endl;
+        cout << player1[i] << endl;
     }
 }
 
 void Bruteforce::displayPlayer2MovesTree() {
-    unsigned int i, j;
+    unsigned int i;
     for(i = 0; i < player2.size(); ++i) {
-        for(j = 0; j < player2[i].size(); ++j) {
-            cout << player2[i][j]+0 << " ";
-        }
-        cout << endl;
+        cout << player2[i] << endl;
     }
 }

@@ -10,6 +10,12 @@ using namespace std;
 
 namespace std {
     typedef basic_string<unsigned char> ustring;
+    inline ostream& operator<<(ostream& os, const ustring& us) {
+        for(unsigned int i = 0; i < us.size(); ++i) {
+            os << (us[i]+0) << " ";
+        }
+        return os;
+    }
 }
 
 class HexBoard {

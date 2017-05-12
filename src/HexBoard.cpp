@@ -40,7 +40,7 @@ void HexBoard::initBoard() {
     positions.clear();
     for(unsigned char i = 0; i < maxNbPawns; ++i) {
         positions += i;
-        if(i < length) board[i % length] = ustring(length, ' ');
+        if(i < length) board[i] = ustring(length, ' ');
     }
 }
 

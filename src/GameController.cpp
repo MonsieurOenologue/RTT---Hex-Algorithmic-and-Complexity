@@ -114,9 +114,9 @@ static void mouse_button_callback(GLFWwindow* window, int key, int action, int m
     double xpos, ypos;
     if(keepGoing && !playConsole && !turnPlayed && key == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
         glfwGetCursorPos(window, &xpos, &ypos);
-        //cout << "Position souris : (" << xpos << ", " << ypos << ")" << endl;
+        //cerr << "Position souris : (" << xpos << ", " << ypos << ")" << endl;
         pixel_to_hex(xpos, ypos);
-        //cout << "Position plateau : (" << xpos << ", " << ypos << ")" << endl;
+        //cerr << "Position plateau : (" << xpos << ", " << ypos << ")" << endl;
         if(xpos < 0 || xpos >= length || ypos < 0 || ypos >= length) {
             cerr << "Erreur : les coordonnees (" << xpos << "," << ypos << ") sortent du plateau de jeu." << endl;
         } else {
@@ -165,8 +165,14 @@ void play() {
         } else if(currentPlayer == "B") {
             if(!bf.isGenerated()) {
                 bf.generateMovesTree(moves);
-                //if(playerR == "B") bf.displayPlayer1MovesTree();
-                //if(playerL == "B") bf.displayPlayer2MovesTree();
+                if(playerR == "B") {
+                    bf.displayNbMovesPlayer1();
+                    //bf.displayPlayer1MovesTree();
+                }
+                if(playerL == "B") {
+                    bf.displayNbMovesPlayer2();
+                    //bf.displayPlayer2MovesTree();
+                }
             }
             if(bf.playNextMove(moves)) turnPlayed = true;
             else {
@@ -297,21 +303,6 @@ int main() {
 		glDrawFlatI(windowWidth, windowHeight);
 		color = false;
 		glDrawFlatI(windowWidth, windowHeight);
-
-		// Enable vertex table
-        /*glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_COLOR_ARRAY);
-
-        // Send data
-        glVertexPointer(P_SIZE, GL_FLOAT, 0, pos);
-        glColorPointer(C_SIZE, GL_FLOAT, 0, colors);
-
-        // Draw stuff
-        glDrawElements(GL_POLYGON, N_VERTS, GL_UNSIGNED_INT, index);
-
-        // Disable vertex table
-        glDisableClientState(GL_COLOR_ARRAY);
-        glDisableClientState(GL_VERTEX_ARRAY);*/
 
 		// Update Screen
 		glFlush();

@@ -10,7 +10,6 @@ public :
                     Action();
                     Action(unsigned char newLength);
                     ~Action();
-    void            giveUp();
     bool            nextMove();
     bool            undoMove();
 };

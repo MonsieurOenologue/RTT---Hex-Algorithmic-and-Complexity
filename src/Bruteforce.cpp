@@ -45,26 +45,6 @@ bool Bruteforce::isGenerated() {
     return generated;
 }
 
-void Bruteforce::generateMovesTree(unsigned char length) {
-    if(generated) return;
-
-    Action boardTemp(length);
-
-    player1.clear();
-    player2.clear();
-
-    cout << "Chargement des solutions de Bruteforce..." << endl;
-
-    generateMovesTree(boardTemp, player1, player2);
-
-    cout << "Chargement termine." << endl
-         << "Appuyez sur une touche pour continuer...";
-    cin.sync();
-    cin.get();
-
-    generated = true;
-}
-
 void Bruteforce::generateMovesTree(Action currentBoard) {
     if(generated) return;
 
@@ -102,7 +82,7 @@ unsigned char Bruteforce::generateMovesTree(Action boardTemp, vector<ustring> &s
                         maybeP1.insert(maybeP1.end(), tmpP1.begin(), tmpP1.end());
                     }
                     maybeP2.insert(maybeP2.end(), tmpP2.begin(), tmpP2.end());
-                } else if(solved.empty()) {
+                } else {
                     depth = generateMovesTree(boardTemp, tmpP1, tmpP2);
                     if(depth > minDepth) {
                         minDepth = depth;
@@ -186,11 +166,20 @@ bool Bruteforce::playNextMove(Action &currentBoardState) {
     return true;
 }
 
-void Bruteforce::displayPlayer1MovesTree() {
-    unsigned long long i, j;
+void Bruteforce::displayNbMovesPlayer1() {
     cout << "Il y a " << player1.size() << " solutions pour le joueur1." << endl
          << "Appuyez sur une touche pour continuer...";
     cin.sync(); cin.get();
+}
+
+void Bruteforce::displayNbMovesPlayer2() {
+    cout << "Il y a " << player2.size() << " solutions pour le joueur2." << endl
+         << "Appuyez sur une touche pour continuer...";
+    cin.sync(); cin.get();
+}
+
+void Bruteforce::displayPlayer1MovesTree() {
+    unsigned int i, j;
     for(i = 0; i < player1.size(); ++i) {
         for(j = 0; j < player1[i].size(); ++j) {
             cout << player1[i][j]+0 << " ";
@@ -200,10 +189,7 @@ void Bruteforce::displayPlayer1MovesTree() {
 }
 
 void Bruteforce::displayPlayer2MovesTree() {
-    unsigned long long i, j;
-    cout << "Il y a " << player2.size() << " solutions pour le joueur2." << endl
-         << "Appuyez sur une touche pour continuer...";
-    cin.sync(); cin.get();
+    unsigned int i, j;
     for(i = 0; i < player2.size(); ++i) {
         for(j = 0; j < player2[i].size(); ++j) {
             cout << player2[i][j]+0 << " ";

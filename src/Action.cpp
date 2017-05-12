@@ -19,8 +19,6 @@ Action::Action(unsigned char newLength) {
 
 Action::~Action() {}
 
-void Action::giveUp() {}
-
 bool Action::nextMove() {
     unsigned char x = 0, y = 0;
     cin >> y >> x;

@@ -17,10 +17,11 @@ public :
                     Bruteforce();
                     ~Bruteforce();
     bool            isGenerated();
-    void            generateMovesTree(unsigned char length);
     void            generateMovesTree(Action currentBoard);
     unsigned char   generateMovesTree(Action boardTemp, vector<ustring> &solvedP1, vector<ustring> &solvedP2);
     bool            playNextMove(Action &currentBoardState);
+    void            displayNbMovesPlayer1();
+    void            displayNbMovesPlayer2();
     void            displayPlayer1MovesTree();
     void            displayPlayer2MovesTree();
 };
